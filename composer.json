@@ -1,0 +1,43 @@
+{
+  "name": "slick/http",
+  "description": "HTTP foundations for slick",
+  "license": "MIT",
+  "homepage": "https://github.com/slickframework/http",
+  "keywords": [
+    "slick",
+    "http",
+    "request"
+  ],
+  "version": "v0.1.0",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Filipe Silva",
+      "email": "silvam.filipe@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Slick\\Http\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Slick\\Tests\\Http\\": "tests"
+    }
+  },
+  "require": {
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.*",
+    "scrutinizer/ocular": "~1.1",
+    "behat/behat": "~3.0.4"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.1-dev",
+      "dev-develop": "0.2-dev"
+    }
+  }
+}
