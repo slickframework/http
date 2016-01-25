@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "246807d7fa816ae0453df9b6d719cac6",
-    "content-hash": "49db9a87b306dfbdb5c3d8353e32897a",
+    "hash": "effaa92260c55234fad6c9d1db306aa0",
+    "content-hash": "8b68659304ee193000cf631d89fba88d",
     "packages": [
         {
             "name": "monolog/monolog",
@@ -283,6 +283,56 @@
                 "slick"
             ],
             "time": "2016-01-11 16:49:11"
+        },
+        {
+            "name": "slick/filter",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/slickframework/filter.git",
+                "reference": "9fee3acdf9917a8e962d5e71d5d6f9112155dfb8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/slickframework/filter/zipball/9fee3acdf9917a8e962d5e71d5d6f9112155dfb8",
+                "reference": "9fee3acdf9917a8e962d5e71d5d6f9112155dfb8",
+                "shasum": ""
+            },
+            "require-dev": {
+                "behat/behat": "~3.0.4",
+                "phpunit/phpunit": "4.*",
+                "scrutinizer/ocular": "~1.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev",
+                    "dev-develop": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Slick\\Filter\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Filipe Silva",
+                    "email": "silvam.filipe@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Filter utilities for Slick Framework",
+            "homepage": "https://github.com/slickframework/filter",
+            "keywords": [
+                "filter",
+                "slick"
+            ],
+            "time": "2016-01-17 16:45:51"
         }
     ],
     "packages-dev": [
@@ -1891,7 +1941,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/class-loader/zipball/0f257ff2742464ae386fb0c552041f8253cba3be",
+                "url": "https://api.github.com/repos/symfony/class-loader/zipball/5fe4b278a65d5059a0e225a1c60d1d8ac42f56c9",
                 "reference": "f1c1790c278fb6960dc616a159e05426a9a1f32b",
                 "shasum": ""
             },
@@ -1994,7 +2044,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/700d15cd8cd0f451ddfb17b2a444f75095b33fe0",
+                "url": "https://api.github.com/repos/symfony/console/zipball/243285dbcb6e812ec0faaca37202c64859b1f691",
                 "reference": "d0239fb42f98dd02e7d342f793c5d2cdee0c478d",
                 "shasum": ""
             },
@@ -2116,7 +2166,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/ee278f7c851533e58ca307f66305ccb9188aceda",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/74d5175d715e9b5752021566d35d6938e1feb153",
                 "reference": "ee278f7c851533e58ca307f66305ccb9188aceda",
                 "shasum": ""
             },
@@ -2225,7 +2275,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-apcu/zipball/85fe388210bfabd43fb72d145b40c548089df44f",
+                "url": "https://api.github.com/repos/symfony/polyfill-apcu/zipball/d1911e6caeb4b6a4c8e2d5c46b978a66b3745e4c",
                 "reference": "85fe388210bfabd43fb72d145b40c548089df44f",
                 "shasum": ""
             },
@@ -2281,7 +2331,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/d7f01c96a4dde264682cf36c28e62086c77a09d4",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/1289d16209491b584839022f29257ad859b8532d",
                 "reference": "d7f01c96a4dde264682cf36c28e62086c77a09d4",
                 "shasum": ""
             },
@@ -2340,7 +2390,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/840aa10881f01df6e1ae3368d6b31d5dba9c47df",
+                "url": "https://api.github.com/repos/symfony/process/zipball/374a3566a718236bac2f009f6305016d644f86b8",
                 "reference": "1cba8f04eb0a9e38184a8003e927a5fb2d62158a",
                 "shasum": ""
             },
@@ -2389,7 +2439,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/da80ffc48366c7d368f010c86e717ea461d0b4c1",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/923b069008bc8689cc9fd913da953f5062ebf099",
                 "reference": "bc0b666903944858f4ffec01c4e50c63e5c276c0",
                 "shasum": ""
             },

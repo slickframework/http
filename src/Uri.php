@@ -11,6 +11,7 @@ namespace Slick\Http;
 
 use Psr\Http\Message\UriInterface;
 use Slick\Http\Exception\InvalidArgumentException;
+use Slick\Http\Uri\Filter\FilterTrait;
 
 /**
  * Implementation of Psr\Http\UriInterface.
@@ -24,18 +25,9 @@ class Uri implements UriInterface
 {
 
     /**
-     * Unreserved characters used in paths, query strings, and fragments.
-     *
-     * @const string
+     * Useful URI filters
      */
-    const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
-
-    /**
-     * Sub-delimiters used in query strings and fragments.
-     *
-     * @const string
-     */
-    const CHAR_SUB_DELIMITERS = '!\$&\'\(\)\*\+,;=';
+    use FilterTrait;
 
     /**
      * @var int[] Array indexed by valid scheme names to their corresponding ports.
@@ -98,9 +90,7 @@ class Uri implements UriInterface
                 (is_object($uri) ? get_class($uri) : gettype($uri))
             ));
         }
-        if (! empty($uri)) {
-            $this->parseUri($uri);
-        }
+        $this->parseUri($uri);
     }
 
     /**
@@ -470,7 +460,7 @@ class Uri implements UriInterface
                 'Invalid path provided; must not contain a URI fragment'
             );
         }
-        $path = $this->filterPath($path);
+        $path = $this->filter('path', $path);
         if ($path !== $this->path) {
             $this->path = $path;
         }
@@ -505,7 +495,7 @@ class Uri implements UriInterface
                 'Query string must not include a URI fragment'
             );
         }
-        $query = $this->filterQuery($query);
+        $query = $this->filter('query', $query);
         if ($query !== $this->query) {
             $this->query = $query;
         }
@@ -536,7 +526,7 @@ class Uri implements UriInterface
                 (is_object($fragment) ? get_class($fragment) : gettype($fragment))
             ));
         }
-        $fragment = $this->filterFragment($fragment);
+        $fragment = $this->filter('fragment', $fragment);
         if ($fragment !== $this->fragment) {
             $this->fragment = $fragment;
         }
@@ -631,8 +621,12 @@ class Uri implements UriInterface
      *
      * @param string $uri
      */
-    private function parseUri($uri)
+    private function parseUri($uri = '')
     {
+        if (empty($uri)) {
+            return;
+        }
+
         $parts = parse_url($uri);
         if (false === $parts) {
             throw new \InvalidArgumentException(
@@ -643,113 +637,12 @@ class Uri implements UriInterface
         $this->userInfo  = isset($parts['user'])     ? $parts['user']     : '';
         $this->host      = isset($parts['host'])     ? $parts['host']     : '';
         $this->port      = isset($parts['port'])     ? $parts['port']     : null;
-        $this->path      = isset($parts['path'])     ? $this->filterPath($parts['path']) : '';
-        $this->query     = isset($parts['query'])    ? $this->filterQuery($parts['query']) : '';
-        $this->fragment  = isset($parts['fragment']) ? $this->filterFragment($parts['fragment']) : '';
+        $this->path      = isset($parts['path'])     ? $this->filter('path', $parts['path']) : '';
+        $this->query     = isset($parts['query'])    ? $this->filter('query', $parts['query']) : '';
+        $this->fragment  = isset($parts['fragment']) ? $this->filter('fragment', $parts['fragment']) : '';
         if (isset($parts['pass'])) {
             $this->userInfo .= ':' . $parts['pass'];
         }
-    }
-
-
-    /**
-     * Filters the path of a URI to ensure it is properly encoded.
-     *
-     * @param string $path
-     * @return string
-     */
-    private function filterPath($path)
-    {
-        $path = preg_replace_callback(
-            '/(?:[^' . self::CHAR_UNRESERVED.
-            ':@&=\+\$,\/;%]+|%(?![A-Fa-f0-9]{2}))/',
-            [$this, 'urlEncodeChar'],
-            $path
-        );
-        if (empty($path)) {
-            // No path
-            return $path;
-        }
-        if ($path[0] !== '/') {
-            // Relative path
-            return $path;
-        }
-        // Ensure only one leading slash, to prevent XSS attempts.
-        return '/' . ltrim($path, '/');
-    }
-
-    /**
-     * Filter a query string to ensure it is propertly encoded.
-     *
-     * Ensures that the values in the query string are properly urlencoded.
-     *
-     * @param string $query
-     * @return string
-     */
-    private function filterQuery($query)
-    {
-        if (! empty($query) && strpos($query, '?') === 0) {
-            $query = substr($query, 1);
-        }
-        $parts = explode('&', $query);
-        foreach ($parts as $index => $part) {
-            list($key, $value) = $this->splitQueryValue($part);
-            if ($value === null) {
-                $parts[$index] = $this->filterQueryOrFragment($key);
-                continue;
-            }
-            $parts[$index] = sprintf(
-                '%s=%s',
-                $this->filterQueryOrFragment($key),
-                $this->filterQueryOrFragment($value)
-            );
-        }
-        return implode('&', $parts);
-    }
-
-    /**
-     * Split a query value into a key/value tuple.
-     *
-     * @param string $value
-     * @return array A value with exactly two elements, key and value
-     */
-    private function splitQueryValue($value)
-    {
-        $data = explode('=', $value, 2);
-        if (1 === count($data)) {
-            $data[] = null;
-        }
-        return $data;
-    }
-
-    /**
-     * Filter a fragment value to ensure it is properly encoded.
-     *
-     * @param null|string $fragment
-     * @return string
-     */
-    private function filterFragment($fragment)
-    {
-        if (! empty($fragment) && strpos($fragment, '#') === 0) {
-            $fragment = substr($fragment, 1);
-        }
-        return $this->filterQueryOrFragment($fragment);
-    }
-
-    /**
-     * Filter a query string key or value, or a fragment.
-     *
-     * @param string $value
-     * @return string
-     */
-    private function filterQueryOrFragment($value)
-    {
-        return preg_replace_callback(
-            '/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMITERS
-            .'%:@\/\?]+|%(?![A-Fa-f0-9]{2}))/',
-            [$this, 'urlEncodeChar'],
-            $value
-        );
     }
 
     /**
@@ -785,17 +678,6 @@ class Uri implements UriInterface
             $uri .= sprintf('#%s', $fragment);
         }
         return $uri;
-    }
-
-    /**
-     * URL encode a character returned by a regex.
-     *
-     * @param array $matches
-     * @return string
-     */
-    private function urlEncodeChar(array $matches)
-    {
-        return rawurlencode($matches[0]);
     }
 
 }
