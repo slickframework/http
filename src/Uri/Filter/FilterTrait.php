@@ -28,6 +28,7 @@ trait FilterTrait
         'path'         => 'Slick\Http\Uri\Filter\Path',
         'query'        => 'Slick\Http\Uri\Filter\Query',
         'queryOrFrame' => 'Slick\Http\Uri\Filter\QueryOrFrame',
+        'scheme'       => 'Slick\Http\Uri\Filter\Scheme',
     ];
 
     /**

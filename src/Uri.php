@@ -10,8 +10,11 @@
 namespace Slick\Http;
 
 use Psr\Http\Message\UriInterface;
+use Slick\Common\Base;
 use Slick\Http\Exception\InvalidArgumentException;
 use Slick\Http\Uri\Filter\FilterTrait;
+use Slick\Http\Uri\Filter\Scheme;
+use Slick\Http\Uri\Parser;
 
 /**
  * Implementation of Psr\Http\UriInterface.
@@ -20,8 +23,16 @@ use Slick\Http\Uri\Filter\FilterTrait;
  *
  * @package Slick\Http
  * @author  Filipe Silva <silvam.filipe@gmail.com>
+ *
+ * @property string $scheme
+ * @property string $userInfo
+ * @property string $host
+ * @property int    $port
+ * @property string $path
+ * @property string $query
+ * @property string $fragment
  */
-class Uri implements UriInterface
+class Uri extends Base implements UriInterface
 {
 
     /**
@@ -30,47 +41,46 @@ class Uri implements UriInterface
     use FilterTrait;
 
     /**
-     * @var int[] Array indexed by valid scheme names to their corresponding ports.
-     */
-    protected $normalSchemes = [
-        'http'  => 80,
-        'https' => 443,
-    ];
-
-    /**
+     * @readwrite
      * @var string
      */
-    private $scheme = '';
+    protected $scheme = '';
 
     /**
+     * @readwrite
      * @var string
      */
-    private $userInfo = '';
+    protected $userInfo = '';
 
     /**
+     * @readwrite
      * @var string
      */
-    private $host = '';
+    protected $host = '';
 
     /**
+     * @readwrite
      * @var int
      */
-    private $port;
+    protected $port;
 
     /**
+     * @readwrite
      * @var string
      */
-    private $path = '';
+    protected $path = '';
 
     /**
+     * @readwrite
      * @var string
      */
-    private $query = '';
+    protected $query = '';
 
     /**
+     * @readwrite
      * @var string
      */
-    private $fragment = '';
+    protected $fragment = '';
 
     /**
      * generated uri string cache
@@ -84,13 +94,14 @@ class Uri implements UriInterface
      */
     public function __construct($uri = '')
     {
+        parent::__construct();
         if (! is_string($uri)) {
             throw new InvalidArgumentException(sprintf(
                 'URI passed to constructor must be a string; received "%s"',
                 (is_object($uri) ? get_class($uri) : gettype($uri))
             ));
         }
-        $this->parseUri($uri);
+        Parser::parse($uri, $this);
     }
 
     /**
@@ -304,7 +315,7 @@ class Uri implements UriInterface
                 (is_object($scheme) ? get_class($scheme) : gettype($scheme))
             ));
         }
-        $scheme = $this->filterScheme($scheme);
+        $scheme = $this->filter('scheme', $scheme);
         if ($scheme !== $this->scheme) {
             $this->scheme = $scheme;
         }
@@ -587,33 +598,8 @@ class Uri implements UriInterface
         if (! $host || ! $port) {
             return false;
         }
-        return ! isset($this->normalSchemes[$scheme]) ||
-            $port !== $this->normalSchemes[$scheme];
-    }
-
-    /**
-     * Filters the scheme to ensure it is a valid scheme.
-     *
-     * @param string $scheme Scheme name.
-     *
-     * @return string Filtered scheme.
-     */
-    private function filterScheme($scheme)
-    {
-        $scheme = strtolower($scheme);
-        $scheme = preg_replace('#:(//)?$#', '', $scheme);
-        if (empty($scheme)) {
-            return '';
-        }
-        if (! array_key_exists($scheme, $this->normalSchemes)) {
-            throw new InvalidArgumentException(sprintf(
-                'Unsupported scheme "%s"; must be any empty string or '.
-                'in the set (%s)',
-                $scheme,
-                implode(', ', array_keys($this->normalSchemes))
-            ));
-        }
-        return $scheme;
+        return ! isset(Scheme::$normalSchemes[$scheme]) ||
+            $port !== Scheme::$normalSchemes[$scheme];
     }
 
     /**
@@ -633,7 +619,7 @@ class Uri implements UriInterface
                 'The source URI string appears to be malformed'
             );
         }
-        $this->scheme    = isset($parts['scheme'])   ? $this->filterScheme($parts['scheme']) : '';
+        $this->scheme    = isset($parts['scheme'])   ? $this->filter('scheme', $parts['scheme']) : '';
         $this->userInfo  = isset($parts['user'])     ? $parts['user']     : '';
         $this->host      = isset($parts['host'])     ? $parts['host']     : '';
         $this->port      = isset($parts['port'])     ? $parts['port']     : null;
