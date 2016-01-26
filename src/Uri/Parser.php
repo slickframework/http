@@ -10,6 +10,7 @@
 namespace Slick\Http\Uri;
 
 use Psr\Http\Message\UriInterface;
+use Slick\Http\Exception\InvalidArgumentException;
 use Slick\Http\Uri;
 use Slick\Http\Uri\Filter\FilterTrait;
 
@@ -32,15 +33,31 @@ class Parser
      */
     private $uri;
 
+    /**
+     * URI filters
+     */
     use FilterTrait;
 
-
+    /**
+     * Parses the provided URI string into provided URI object
+     *
+     * @param string $string
+     * @param UriInterface $uri
+     */
     public function __construct($string, UriInterface $uri)
     {
         $this->string = $string;
         $this->uri = $uri;
     }
 
+    /**
+     * Parses the provided URI string into provided URI object
+     *
+     * @param string $string
+     * @param UriInterface $uri
+     *
+     * @return UriInterface
+     */
     public static function parse($string, UriInterface $uri)
     {
         $parser = new static($string, $uri);
@@ -48,21 +65,26 @@ class Parser
         return $uri;
     }
 
+    /**
+     * Parse the string and assign values to te URI
+     */
     protected function process()
     {
-        if (empty($string)) {
+        if (empty($this->string)) {
             return;
         }
 
-        $parts = parse_url($string);
+        $parts = parse_url($this->string);
         if (false === $parts) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'The source URI string appears to be malformed'
             );
         }
 
 
-        $this->uri->scheme = $this->filter('scheme', $parts['scheme']);
+        $this->uri->scheme = isset($parts['scheme'])
+            ? $this->filter('scheme', $parts['scheme'])
+            : '';
 
         $this->uri->userInfo = isset($parts['user'])
             ? $parts['user']
@@ -77,8 +99,12 @@ class Parser
             : null;
 
         $this->uri->path = $this->filter('path', $parts['path']);
-        $this->uri->query = $this->filter('query', $parts['query']);
-        $this->uri->fragment  = $this->filter('fragment', $parts['fragment']);
+        $this->uri->query = isset($parts['query'])
+            ? $this->filter('query', $parts['query'])
+            : '';
+        $this->uri->fragment = isset($parts['fragment'])
+            ? $this->filter('fragment', $parts['fragment'])
+            : '';
 
         if (isset($parts['pass'])) {
             $this->uri->userInfo .= ':' . $parts['pass'];

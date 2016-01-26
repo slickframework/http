@@ -114,7 +114,7 @@ class Response extends Message implements ResponseInterface
     public function __construct($body = 'php://memory', $status = 200, array $headers = [])
     {
         parent::__construct($body, $headers);
-        $this->withStatus($status);
+        $this->setStatusCode($status);
     }
 
     /**
@@ -143,11 +143,24 @@ class Response extends Message implements ResponseInterface
      * @param string $reasonPhrase The reason phrase to use with the
      *     provided status code; if none is provided, implementations MAY
      *     use the defaults as suggested in the HTTP specification.
-     * @return self
+     * @return self|$this|Response|ResponseInterface
      *
      * @throws \InvalidArgumentException For invalid status code arguments.
      */
     public function withStatus($code, $reasonPhrase = '')
+    {
+        $response = clone $this;
+        return $response->setStatusCode($code, $reasonPhrase);
+    }
+
+    /**
+     * Sets the response status code and reason phrase
+     *
+     * @param int $code
+     * @param string $reasonPhrase
+     * @return $this
+     */
+    protected function setStatusCode($code, $reasonPhrase = '')
     {
         $codes = array_keys($this->phrases);
         if (!in_array($code, $codes)) {

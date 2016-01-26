@@ -43,9 +43,9 @@ class Message implements MessageInterface
      */
     public function __construct($body = 'php://memory', array $headers = [])
     {
-        $this->withBody(new Stream($body));
+        $this->body = new Stream($body);
         foreach ($headers as $name => $value) {
-            $this->withHeader($name, $value);
+            $this->setHeader($name, $value);
         }
     }
 
@@ -77,8 +77,10 @@ class Message implements MessageInterface
                 "not a acceptable HTTP protocol version."
             );
         }
-        $this->protocolVersion = $version;
-        return $this;
+        $message = clone $this;
+        $message->protocolVersion = $version;
+
+        return $message;
     }
 
     /**
@@ -188,11 +190,27 @@ class Message implements MessageInterface
      */
     public function withHeader($name, $value)
     {
+        $message = clone $this;
+        $message->setHeader($name, $value);
+        return $message;
+    }
+
+    /**
+     * Adds the header value specified by name
+     *
+     * @param string $name
+     * @param string $value
+     *
+     * @return $this|self|Message|MessageInterface
+     */
+    protected function setHeader($name, $value)
+    {
         $value = $this->prepareHeaderValues($value);
         $normalized = strtolower($name);
         if ($this->hasHeader($name)) {
             $name = $this->headerNames[$normalized];
         }
+
         $this->headerNames[$normalized] = $name;
         $this->headers[$name] = $value;
         return $this;
@@ -231,12 +249,13 @@ class Message implements MessageInterface
     public function withoutHeader($name)
     {
         $normalized = strtolower($name);
+        $message = clone $this;
         if ($this->hasHeader($name)) {
             $name = $this->headerNames[$normalized];
-            unset($this->headerNames[$normalized]);
-            unset($this->headers[$name]);
+            unset($message->headerNames[$normalized]);
+            unset($message->headers[$name]);
         }
-        return $this;
+        return $message;
     }
 
     /**
@@ -264,8 +283,9 @@ class Message implements MessageInterface
      */
     public function withBody(StreamInterface $body)
     {
-        $this->body = $body;
-        return $this;
+        $message = clone $this;
+        $message->body = $body;
+        return $message;
     }
 
     /**

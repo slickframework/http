@@ -10,9 +10,10 @@
 namespace Slick\Tests\Http;
 
 use PHPUnit_Framework_TestCase as TestCase;
-
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 use Slick\Http\Message;
+use Slick\Http\Stream;
 
 /**
  * Message test case
@@ -74,8 +75,10 @@ class MessageTest extends TestCase
      */
     public function setVersion()
     {
-        $this->assertSame($this->message, $this->message->withProtocolVersion('1.0'));
-        $this->assertEquals('1.0', $this->message->getProtocolVersion());
+        $message = $this->message->withProtocolVersion('1.0');
+        $this->assertNotSame($this->message, $message);
+        $this->assertEquals('1.1', $this->message->getProtocolVersion());
+        $this->assertEquals('1.0', $message->getProtocolVersion());
         $this->message->withProtocolVersion('2');
     }
 
@@ -85,7 +88,7 @@ class MessageTest extends TestCase
      */
     public function addHeader()
     {
-        $this->assertSame(
+        $this->assertNotSame(
             $this->message,
             $this->message->withHeader('Content-Type', 'text/html')
         );
@@ -97,11 +100,12 @@ class MessageTest extends TestCase
      */
     public function replaceHeader()
     {
-        $this->message->withHeader('Content-Type', 'text/html');
-        $this->message->withHeader('content-type', 'text/xml');
+        $message = $this->message
+            ->withHeader('Content-Type', 'text/html')
+            ->withHeader('content-type', 'text/xml');
         $this->assertEquals(
             'text/xml',
-            $this->message->getHeaderLine('content-type')
+            $message->getHeaderLine('content-type')
         );
     }
 
@@ -111,11 +115,12 @@ class MessageTest extends TestCase
      */
     public function appendHeader()
     {
-        $this->message->withHeader('Content-Type', 'text/html');
-        $this->message->withAddedHeader('content-type', 'text/xml');
+        $message = $this->message
+            ->withHeader('Content-Type', 'text/html')
+            ->withAddedHeader('content-type', 'text/xml');
         $this->assertEquals(
             ['text/html', 'text/xml'],
-            $this->message->getHeader('content-type')
+            $message->getHeader('content-type')
         );
     }
 
@@ -125,9 +130,23 @@ class MessageTest extends TestCase
      */
     public function removeHeader()
     {
-        $this->message->withHeader('Content-Type', 'text/html');
-        $this->message->withAddedHeader('content-type', 'text/xml');
-        $this->assertSame($this->message, $this->message->withoutHeader('Content-type'));
-        $this->assertEquals(['Accept' => ['text/xml']], $this->message->getHeaders());
+        $message = $this->message
+            ->withHeader('Content-Type', 'text/html')
+            ->withAddedHeader('content-type', 'text/xml')
+            ->withoutHeader('Content-type');
+        $this->assertNotSame($this->message, $message);
+        $this->assertEquals(['Accept' => ['text/xml']], $message->getHeaders());
+    }
+
+    /**
+     * Should clone the message a assign the body stream
+     * @test
+     */
+    public function withBody()
+    {
+        $body = new Stream('php://memory');
+        $message = $this->message->withBody($body);
+        $this->assertNotSame($this->message, $message);
+        $this->assertInstanceOf(MessageInterface::class, $message);
     }
 }

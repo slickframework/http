@@ -316,10 +316,12 @@ class Uri extends Base implements UriInterface
             ));
         }
         $scheme = $this->filter('scheme', $scheme);
+        $uri = $this;
         if ($scheme !== $this->scheme) {
-            $this->scheme = $scheme;
+            $uri = clone ($this);
+            $uri->scheme = $scheme;
         }
-        return $this;
+        return $uri;
     }
 
     /**
@@ -356,10 +358,12 @@ class Uri extends Base implements UriInterface
         if ($password) {
             $info .= ':' . $password;
         }
+        $uri = $this;
         if ($info !== $this->userInfo) {
-            $this->userInfo = $info;
+            $uri = clone $this;
+            $uri->userInfo = $info;
         }
-        return $this;
+        return $uri;
     }
 
     /**
@@ -383,10 +387,12 @@ class Uri extends Base implements UriInterface
                 (is_object($host) ? get_class($host) : gettype($host))
             ));
         }
+        $uri = $this;
         if ($host !== $this->host) {
-            $this->host = $host;
+            $uri = clone($this);
+            $uri->host = $host;
         }
-        return $this;
+        return $uri;
     }
 
     /**
@@ -424,12 +430,13 @@ class Uri extends Base implements UriInterface
             ));
         }
 
-
+        $uri = $this;
         if ($port !== $this->port) {
-            $this->port = $port;
+            $uri = clone $this;
+            $uri->port = $port;
         }
 
-        return $this;
+        return $uri;
     }
 
     /**
@@ -472,11 +479,13 @@ class Uri extends Base implements UriInterface
             );
         }
         $path = $this->filter('path', $path);
+        $uri = $this;
         if ($path !== $this->path) {
-            $this->path = $path;
+            $uri = clone $this;
+            $uri->path = $path;
         }
 
-        return $this;
+        return $uri;
     }
 
     /**
@@ -507,11 +516,13 @@ class Uri extends Base implements UriInterface
             );
         }
         $query = $this->filter('query', $query);
+        $uri = $this;
         if ($query !== $this->query) {
-            $this->query = $query;
+            $uri = clone $this;
+            $uri->query = $query;
         }
 
-        return $this;
+        return $uri;
     }
 
     /**
@@ -538,10 +549,12 @@ class Uri extends Base implements UriInterface
             ));
         }
         $fragment = $this->filter('fragment', $fragment);
+        $uri = $this;
         if ($fragment !== $this->fragment) {
-            $this->fragment = $fragment;
+            $uri = clone $this;
+            $uri->fragment = $fragment;
         }
-        return $this;
+        return $uri;
     }
 
     /**
@@ -592,43 +605,11 @@ class Uri extends Base implements UriInterface
      */
     private function isNonStandardPort($scheme, $host, $port)
     {
-        if (! $scheme) {
-            return true;
-        }
         if (! $host || ! $port) {
             return false;
         }
         return ! isset(Scheme::$normalSchemes[$scheme]) ||
             $port !== Scheme::$normalSchemes[$scheme];
-    }
-
-    /**
-     * Parse a URI into its parts, and set the properties
-     *
-     * @param string $uri
-     */
-    private function parseUri($uri = '')
-    {
-        if (empty($uri)) {
-            return;
-        }
-
-        $parts = parse_url($uri);
-        if (false === $parts) {
-            throw new \InvalidArgumentException(
-                'The source URI string appears to be malformed'
-            );
-        }
-        $this->scheme    = isset($parts['scheme'])   ? $this->filter('scheme', $parts['scheme']) : '';
-        $this->userInfo  = isset($parts['user'])     ? $parts['user']     : '';
-        $this->host      = isset($parts['host'])     ? $parts['host']     : '';
-        $this->port      = isset($parts['port'])     ? $parts['port']     : null;
-        $this->path      = isset($parts['path'])     ? $this->filter('path', $parts['path']) : '';
-        $this->query     = isset($parts['query'])    ? $this->filter('query', $parts['query']) : '';
-        $this->fragment  = isset($parts['fragment']) ? $this->filter('fragment', $parts['fragment']) : '';
-        if (isset($parts['pass'])) {
-            $this->userInfo .= ':' . $parts['pass'];
-        }
     }
 
     /**
@@ -652,7 +633,7 @@ class Uri extends Base implements UriInterface
             $uri .= $authority;
         }
         if ($path) {
-            if (empty($path) || '/' !== substr($path, 0, 1)) {
+            if ('/' !== substr($path, 0, 1)) {
                 $path = '/' . $path;
             }
             $uri .= $path;
