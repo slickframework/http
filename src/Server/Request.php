@@ -11,38 +11,38 @@ use Psr\Http\Message\UploadedFileInterface;
 use Slick\Http\Exception\InvalidArgumentException;
 use Slick\Http\Request as NormalRequest;
 
-class Requests extends NormalRequest implements ServerRequestInterface
+class Request extends NormalRequest implements ServerRequestInterface
 {
 
     /**
      * @var array
      */
-    private $attributes = [];
+    protected $attributes = [];
 
     /**
      * @var array
      */
-    private $cookieParams = [];
+    protected $cookieParams = [];
 
     /**
      * @var null|array|object
      */
-    private $parsedBody;
+    protected $parsedBody;
 
     /**
      * @var array
      */
-    private $queryParams = [];
+    protected $queryParams = [];
 
     /**
      * @var array
      */
-    private $serverParams;
+    protected $serverParams;
 
     /**
      * @var array
      */
-    private $uploadedFiles;
+    protected $uploadedFiles;
 
     /**
      * Retrieve server parameters.

@@ -24,19 +24,19 @@ class Request extends Message implements RequestInterface
     /**
      * @var string
      */
-    private $method = '';
+    protected $method = '';
 
     /**
      * The request-target, if it has been provided or calculated.
      *
      * @var null|string
      */
-    private $requestTarget;
+    protected $requestTarget;
 
     /**
      * @var null|UriInterface
      */
-    private $uri;
+    protected $uri;
 
     /**#@+
      * @var string HTTP request methods
