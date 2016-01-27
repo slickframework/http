@@ -111,7 +111,7 @@ class Response extends Message implements ResponseInterface
      *
      * @throws InvalidArgumentException on any invalid element.
      */
-    public function __construct($body = 'php://memory', $status = 200, array $headers = [])
+    public function __construct($status = 200, array $headers = [], $body = 'php://memory')
     {
         parent::__construct($body, $headers);
         $this->setStatusCode($status);

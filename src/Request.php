@@ -54,6 +54,23 @@ class Request extends Message implements RequestInterface
     /**#@- */
 
     /**
+     * Creates a request message.
+     *
+     * @param string $method
+     * @param null   $target
+     * @param array  $headers
+     * @param string $body
+     */
+    public function __construct(
+        $method = self::METHOD_GET, $target = null, array $headers = [],
+        $body = 'php://memory'
+    ) {
+        parent::__construct($body, $headers);
+        $this->method = $method;
+        $this->requestTarget = $target;
+    }
+
+    /**
      * Retrieves the message's request target.
      *
      * Retrieves the message's request-target either as it will appear (for
