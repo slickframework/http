@@ -43,7 +43,9 @@ class Message implements MessageInterface
      */
     public function __construct($body = 'php://memory', array $headers = [])
     {
-        $this->body = new Stream($body);
+        $this->body = ($body instanceof StreamInterface)
+            ? $body
+            : new Stream($body);
         foreach ($headers as $name => $value) {
             $this->setHeader($name, $value);
         }

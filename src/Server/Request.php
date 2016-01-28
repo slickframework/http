@@ -80,7 +80,7 @@ class Request extends PsrRequest implements ServerRequestInterface
     /**
      * @var array
      */
-    protected $serverParams;
+    protected $serverParams = [];
 
     /**
      * @var array
@@ -183,6 +183,7 @@ class Request extends PsrRequest implements ServerRequestInterface
     {
         $message = clone $this;
         $message->queryParams = $query;
+        return $message;
     }
 
     /**

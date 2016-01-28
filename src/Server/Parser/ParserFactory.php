@@ -82,7 +82,7 @@ class ParserFactory
     private function create()
     {
         $header = $this->request->hasHeader('Content-Type')
-            ? $this->request->getHeader('Content-Type')
+            ? $this->request->getHeaderLine('Content-Type')
             : null;
         $class = self::$defaultParser;
         if (isset(self::$map[$header])) {
