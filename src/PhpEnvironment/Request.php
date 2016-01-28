@@ -149,7 +149,7 @@ class Request extends ServerRequest implements ServerRequestInterface
         $name = 'X-Requested-With';
         $header = $this->hasHeader($name);
         return false !== $header &&
-        $this->getHeader($name) == 'XMLHttpRequest';
+            $this->getHeaderLine($name) == 'XMLHttpRequest';
     }
 
     /**
@@ -162,7 +162,7 @@ class Request extends ServerRequest implements ServerRequestInterface
         $name = 'User-Agent';
         $header = $this->hasHeader($name);
         return false !== $header &&
-        stristr($this->getHeader($name), ' flash');
+            stristr($this->getHeaderLine($name), ' flash');
     }
 
     /**

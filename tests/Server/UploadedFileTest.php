@@ -141,6 +141,7 @@ class UploadedFileTest extends TestCase
     public function writeProtectedFile()
     {
         $temp = __DIR__.'/test.txt';
+        chmod($temp, 0444);
         $stream = new Stream('php://memory', 'rw+');
         $stream->write('test');
         $file = new UploadedFile($stream, 4, UPLOAD_ERR_OK);

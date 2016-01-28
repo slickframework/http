@@ -57,23 +57,13 @@ class ServerRequestUri
     {
         $scheme = $this->getServer('REQUEST_SCHEME', 'http');
         $port = $this->getServer('SERVER_PORT', 80);
-        $serveName =  $this->getServer('SERVER_NAME');
+        $serveName =  $this->getServer('SERVER_NAME') ?: '';
         $uri = new Uri();
         return $uri->withScheme($scheme)
             ->withHost($serveName)
             ->withQuery($this->getServer('QUERY_STRING', ''))
             ->withPath($this->getBaseUrl())
             ->withPort($port);
-    }
-
-    /**
-     * Returns the request URI tobe used as target in the request message
-     *
-     * @return string
-     */
-    public function getRequestUri()
-    {
-        return $this->getServer('REQUEST_URI');
     }
 
     /**

@@ -34,7 +34,7 @@ class Message implements MessageInterface
     /**
      * @var array List of available header names
      */
-    private $headerNames = [];
+    protected $headerNames = [];
 
     /**
      * Message constructor.
