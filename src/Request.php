@@ -68,6 +68,8 @@ class Request extends Message implements RequestInterface
         parent::__construct($body, $headers);
         $this->method = $method;
         $this->requestTarget = $target;
+        $target = (null === $target) ? '' : $target;
+        $this->uri = new Uri($target);
     }
 
     /**
