@@ -369,7 +369,7 @@ class Request extends PsrRequest implements ServerRequestInterface
      * @param array $uploadedFiles
      * @throws InvalidArgumentException if any leaf is not an UploadedFileInterface instance.
      */
-    private function validateUploadedFiles(array $uploadedFiles)
+    protected function validateUploadedFiles(array $uploadedFiles)
     {
         foreach ($uploadedFiles as $file) {
             if (is_array($file)) {

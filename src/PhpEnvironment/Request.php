@@ -105,6 +105,10 @@ class Request extends ServerRequest implements ServerRequestInterface
         $this->parsedBody =$this->getContentParser()
             ->setContent($this->body)
             ->parse();
+
+        $files = ServerFiles::get();
+        $this->validateUploadedFiles($files);
+        $this->uploadedFiles = $files;
     }
 
     /**
