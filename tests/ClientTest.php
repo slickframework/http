@@ -30,12 +30,12 @@ class ClientTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->client = new Client(['base_uri' => 'https://api.github.com']);
+        $this->client = new Client(['base_uri' => 'https://httpbin.org']);
     }
 
     public function testGetApiCall()
     {
-        $request = new Request(Request::METHOD_GET, '/users/silvamfilipe/orgs');
+        $request = new Request(Request::METHOD_GET, '/get');
         $response = $this->client->send($request);
         $this->assertInstanceOf(Response::class, $response);
         return $response;
@@ -50,6 +50,6 @@ class ClientTest extends TestCase
     {
         $data = $response->getBody()->getContents();
         $object = json_decode($data);
-        $this->assertEquals('slickframework', $object[0]->login);
+        $this->assertEquals('httpbin.org', $object->headers->Host);
     }
 }
