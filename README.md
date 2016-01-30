@@ -10,7 +10,7 @@
 `Slick/Http` is an useful library for Web  application foundation. It implements the PSR-7
 message interface and has simple middleware server where you can build on top of. You Can
 also add session handling to the mix and even create a session driver that fit your needs.
-For API request it has a client with is a wrapper to the extraordinary GuzzleHttp library.
+For API request it has a client witch is a wrapper to the extraordinary GuzzleHttp library.
 
 This package is compliant with PSR-2 code standards and PSR-4 autoload standards. It
 also applies the [semantic version 2.0.0](http://semver.org) specification.
