@@ -10,7 +10,7 @@
 namespace Slick\Tests\Http\Session\Driver;
 
 use PHPUnit_Framework_TestCase as TestCase;
-use Slick\Http\Session\Driver\Null as NullDriver;
+use Slick\Http\Session\Driver\NullDriver;
 
 /**
  * Null session driver test

@@ -11,7 +11,7 @@ namespace Slick\Tests\Http;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Slick\Http\Session;
-use Slick\Http\Session\Driver\Null as NullDriver;
+use Slick\Http\Session\Driver\NullDriver;
 
 /**
  * Session factory test case
