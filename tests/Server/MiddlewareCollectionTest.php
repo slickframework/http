@@ -61,21 +61,6 @@ class MiddlewareCollectionTest extends TestCase
     }
 
     /**
-     * should raise an exception or fatal error
-     * @test
-     */
-    public function appendOtherObjectType()
-    {
-        $obj = (object)[];
-        try {
-            $this->collection[] = $obj;
-            $this->fail("Collection shouldn't accept other object types.");
-        } catch (\Exception $exp) {
-            $this->assertInstanceOf('Exception', $exp);
-        }
-    }
-
-    /**
      * @return MockObject|MiddlewareInterface
      */
     protected function getMiddlewareDouble()

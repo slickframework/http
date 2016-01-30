@@ -18,7 +18,7 @@ use Psr\Http\Message\ResponseInterface;
  * @package Slick\Http
  * @author  Filipe Silva <silvam.filipe@gmail.com>
  */
-class Client implements clientInterface
+class Client implements ClientInterface
 {
 
     /**

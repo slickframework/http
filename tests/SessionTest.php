@@ -11,7 +11,7 @@ namespace Slick\Tests\Http;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Slick\Http\Session;
-use Slick\Http\Session\Driver\Null;
+use Slick\Http\Session\Driver\NullDriver;
 
 /**
  * Session factory test case
@@ -29,7 +29,7 @@ class SessionTest extends TestCase
     public function createSessionData()
     {
         $session = Session::create(Session::DRIVER_NULL);
-        $this->assertInstanceOf(Null::class, $session);
+        $this->assertInstanceOf(NullDriver::class, $session);
     }
 
     /**

@@ -64,6 +64,7 @@ class Server implements MiddlewareRunnerInterface
     public function add(MiddlewareInterface $middleware)
     {
         $this->middlewareCollection->append($middleware);
+        return $this;
     }
 
     /**

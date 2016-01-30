@@ -1,6 +1,6 @@
 {
   "name": "slick/http",
-  "description": "HTTP foundations for slick",
+  "description": "`Slick/Http` is an useful library for Web  application foundation. It implements the PSR-7 message interface and has middleware server, session handling and an HTTP client.",
   "license": "MIT",
   "homepage": "https://github.com/slickframework/http",
   "keywords": [
@@ -8,7 +8,7 @@
     "http",
     "request"
   ],
-  "version": "v0.1.0",
+  "version": "v1.2.0",
   "minimum-stability": "dev",
   "authors": [
     {
@@ -40,8 +40,8 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "0.1-dev",
-      "dev-develop": "0.2-dev"
+      "dev-master": "1.2-dev",
+      "dev-develop": "1.3-dev"
     }
   }
 }

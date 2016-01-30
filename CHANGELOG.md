@@ -2,7 +2,7 @@
 
 All Notable changes to `Slick/http` will be documented in this file.
 
-## 1.2.0 - 2016-01-19
+## 1.2.0 - 2016-01-30
 
 ### Added
 - Initial release

@@ -18,7 +18,7 @@ use Slick\Http\SessionDriverInterface;
  * @package Slick\Http\Session\Driver
  * @author  Filipe Silva <silvam.fiipe@gmail.com>
  */
-class Null extends Base implements SessionDriverInterface
+class NullDriver extends Base implements SessionDriverInterface
 {
 
     /**

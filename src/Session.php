@@ -23,7 +23,7 @@ final class Session extends Base
 
     /** Know session drivers */
     const DRIVER_SERVER = 'Slick\Http\Session\Driver\Server';
-    const DRIVER_NULL   = 'Slick\Http\Session\Driver\Null';
+    const DRIVER_NULL   = 'Slick\Http\Session\Driver\NullDriver';
 
     /**
      * @readwrite
