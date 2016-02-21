@@ -2,6 +2,11 @@
 
 All Notable changes to `Slick/http` will be documented in this file.
 
+## 1.2.2 - 2016-02-21
+
+### Fixed
+- Fixed the method acknowledge for magic methods is<Method>()
+
 ## 1.2.1 - 2016-02-21
 
 ### Fixed
