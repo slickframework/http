@@ -235,7 +235,7 @@ class Request extends ServerRequest implements ServerRequestInterface
      */
     private function isMethod($method)
     {
-        return (bool) $this->getMethod() == $method;
+        return $this->getMethod() === $method;
     }
 
     /**
