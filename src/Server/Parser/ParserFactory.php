@@ -32,7 +32,9 @@ class ParserFactory
      *            parse.
      */
     private static $map = [
-        'application/x-www-form-urlencoded' =>
+        'application\/x-www-form-urlencoded' =>
+            "Slick\\Http\\Server\\Parser\\UrlEncodedPost",
+        'multipart\/form-data' =>
             "Slick\\Http\\Server\\Parser\\UrlEncodedPost"
     ];
 
@@ -85,8 +87,12 @@ class ParserFactory
             ? $this->request->getHeaderLine('Content-Type')
             : null;
         $class = self::$defaultParser;
-        if (isset(self::$map[$header])) {
-            $class = self::$map[$header];
+        foreach (array_keys(self::$map) as $name) {
+            $regExp = "/$name/i";
+            if (preg_match($regExp, $header)) {
+                $class = self::$map[$name];
+                break;
+            }
         }
         return new $class;
     }
