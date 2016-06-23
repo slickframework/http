@@ -55,6 +55,19 @@ class Server implements MiddlewareRunnerInterface
     }
 
     /**
+     * Set HTTP request message
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return Server
+     */
+    public function setRequest(ServerRequestInterface $request)
+    {
+        $this->request = $request;
+        return $this;
+    }
+
+    /**
      * Adds a middleware object to the stack
      *
      * @param MiddlewareInterface $middleware
