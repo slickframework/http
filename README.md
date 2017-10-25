@@ -1,16 +1,14 @@
-# Slick Http package
+# Slick Configuration
 
-[![Latest Version](https://img.shields.io/github/release/slickframework/http.svg?style=flat-square)](https://github.com/slickframework/http/releases)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/slickframework/http/master.svg?style=flat-square)](https://travis-ci.org/slickframework/http)
-[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/slickframework/http/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/slickframework/http/code-structure?branch=master)
-[![Quality Score](https://img.shields.io/scrutinizer/g/slickframework/http/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/slickframework/http?branch=master)
-[![Total Downloads](https://img.shields.io/packagist/dt/slick/http.svg?style=flat-square)](https://packagist.org/packages/slick/http)
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE.md)
+[![Build Status][ico-travis]][link-travis]
+[![Quality Score][ico-code-quality]][link-code-quality]
+[![Total Downloads][ico-downloads]][link-downloads]
 
-`Slick/Http` is an useful library for Web  application foundation. It implements the PSR-7
-message interface and has simple middleware server where you can build on top of. You Can
-also add session handling to the mix and even create a session driver that fit your needs.
-For API request it has a client witch is a wrapper to the extraordinary GuzzleHttp library.
+`Slick/Configuration` is a simple package that deals with configuration files. It has a very simple
+interface that you can use to set your own configuration drivers. By default it uses the PHP arrays
+for configuration as it does not need any parser and therefore is more performance friendly.
 
 This package is compliant with PSR-2 code standards and PSR-4 autoload standards. It
 also applies the [semantic version 2.0.0](http://semver.org) specification.
@@ -20,7 +18,7 @@ also applies the [semantic version 2.0.0](http://semver.org) specification.
 Via Composer
 
 ``` bash
-$ composer require slick/http
+$ composer require slick/configuration
 ```
 
 ## Usage
@@ -148,26 +146,45 @@ handler to save in a database by simply implementing the `Slick\Http\SessionDriv
 It also comes with a `Slick\Http\Session\Driver\AbstractDriver` class that has all the basic
 operations of the interface implemented.
 
+Please check (documentation site)[http://configuration.slick-framework.com] for a complete reference. 
+
+## Change log
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
 ## Testing
 
 ``` bash
-$ vendor/bin/phpunit
+$ composer test
 ```
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](CONTRIBUTING.md) and [CODE_OF_CONDUCT](CONDUCT.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email silvam.filipe@gmail.com instead of using the issue tracker.
+If you discover any security related issues, please email slick.framework@gmail.com instead of using the issue tracker.
 
 ## Credits
 
-- [Slick framework](https://github.com/slickframework)
-- [All Contributors](https://github.com/slickframework/common/graphs/contributors)
+- [All Contributors][link-contributors]
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+[ico-version]: https://img.shields.io/packagist/v/slick/http.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/slickframework/http/master.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/slickframework/http.svg?style=flat-square
+[ico-code-quality]: https://img.shields.io/scrutinizer/g/slickframework/http.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/slick/http.svg?style=flat-square
+
+[link-packagist]: https://packagist.org/packages/slick/http
+[link-travis]: https://travis-ci.org/slickframework/http
+[link-scrutinizer]: https://scrutinizer-ci.com/g/slickframework/http/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/slickframework/http
+[link-downloads]: https://packagist.org/packages/slickframework/http
+[link-contributors]: https://github.com/slickframework/http/graphs/contributors
 

@@ -1,0 +1,4 @@
+suites:
+  slick_http_suite:
+    namespace: Slick\Http
+    psr4_prefix: Slick\Http
