@@ -13,6 +13,7 @@ use Slick\Http\Message\Exception\InvalidArgumentException;
 use Slick\Http\Message\Server\Request;
 use PhpSpec\ObjectBehavior;
 use Slick\Http\Message\Server\UploadedFile;
+use Slick\Http\Message\Stream\TextStream;
 
 /**
  * RequestSpec specs
@@ -94,5 +95,51 @@ class RequestSpec extends ObjectBehavior
     {
         $this->shouldThrow(InvalidArgumentException::class)
             ->during('withUploadedFiles', [['foo' => 'bar']]);
+    }
+
+    function it_parses_data_from_body()
+    {
+        $body = new TextStream('foo=bar&bar=bas');
+        $request = $this
+            ->withBody($body)
+            ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
+        $request->getParsedBody()->shouldHaveKeyWithValue('bar', 'bas');
+    }
+
+    function it_can_create_an_instance_with_other_parsed_body_data()
+    {
+        $request = $this->withParsedBody(['foo' => 'bar']);
+        $request->shouldNotBe($this->getWrappedObject());
+        $request->shouldBeAnInstanceOf(Request::class);
+        $request->getParsedBody()->shouldBe(['foo' => 'bar']);
+    }
+
+    function it_throws_an_exception_for_unsupported_data_types_on_parsed_body()
+    {
+        $this->shouldThrow(InvalidArgumentException::class)
+            ->during('withParsedBody', ['Hello there!']);
+    }
+
+    function it_holds_a_list_of_named_attributes()
+    {
+        $this->getAttributes()->shouldBeArray();
+    }
+
+    function it_can_create_a_new_instance_with_a_specific_attribute()
+    {
+        $request = $this->withAttribute('foo', 'bar');
+        $request->shouldNotBe($this->getWrappedObject());
+        $request->shouldBeAnInstanceOf(Request::class);
+        $request->getAttribute('foo')->shouldBe('bar');
+    }
+
+    function it_can_create_an_instance_without_an_attribute()
+    {
+        $request = $this->withAttribute('test', 'fail')
+            ->withAttribute('foo', 'bar')
+            ->withoutAttribute('test');
+        $request->shouldNotBe($this->getWrappedObject());
+        $request->shouldBeAnInstanceOf(Request::class);
+        $request->getAttribute('test', false)->shouldBe(false);
     }
 }

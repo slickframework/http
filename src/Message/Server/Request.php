@@ -45,6 +45,16 @@ class Request extends HttpRequest
     private $uploadedFiles;
 
     /**
+     * @var mixed
+     */
+    private $parsedBody;
+
+    /**
+     * @var array
+     */
+    private $attributes = [];
+
+    /**
      * Creates an HTTP Server Request Message
      *
      * @param string                   $method
@@ -227,8 +237,6 @@ class Request extends HttpRequest
 
     /**
      * Loads the headers form request
-     *
-     * @param array $customHeaders
      */
     private function loadHeaders()
     {
@@ -236,10 +244,133 @@ class Request extends HttpRequest
             if (substr($key, 0, 5) <> 'HTTP_') {
                 continue;
             }
-            $header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
+            $header = str_replace(
+                ' ',
+                '-',
+                ucwords(
+                    str_replace('_', ' ', strtolower(substr($key, 5)))
+                )
+            );
             $this->headers[$this->headerKey($header)] = [$value];
         }
     }
 
+    /**
+     * Retrieve any parameters provided in the request body.
+     *
+     * @return null|array|object The deserialized body parameters, if any.
+     *     These will typically be an array or object.
+     */
+    public function getParsedBody()
+    {
+        if (! $this->parsedBody) {
+            $parser = new BodyParser($this->getHeaderLine('Content-Type'));
+            $this->parsedBody = $parser->parse($this->getBody());
+        }
+        return $this->parsedBody;
+    }
+
+    /**
+     * Return an instance with the specified body parameters.
+     *
+     * @param null|array|object $data The deserialized body data. This will
+     *     typically be in an array or object.
+     *
+     * @return Request
+     * @throws InvalidArgumentException if an unsupported argument type is
+     *     provided.
+     */
+    public function withParsedBody($data)
+    {
+        if (
+            ! is_null($data) &&
+            ! is_array($data) &&
+            ! is_object($data)
+        ) {
+            throw new InvalidArgumentException(
+                "Only NULL, array or Object types could be used to ".
+                "create a new server request message with parsed body."
+            );
+        }
+
+        $request = clone $this;
+        $request->parsedBody = $data;
+        return $request;
+    }
+
+    /**
+     * Retrieve attributes derived from the request.
+     *
+     * The request "attributes" may be used to allow injection of any
+     * parameters derived from the request: e.g., the results of path
+     * match operations; the results of decrypting cookies; the results of
+     * deserializing non-form-encoded message bodies; etc. Attributes
+     * will be application and request specific, and CAN be mutable.
+     *
+     * @return mixed[] Attributes derived from the request.
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Return an instance with the specified derived request attribute.
+     *
+     * This method allows setting a single derived request attribute as
+     * described in getAttributes().
+     *
+     * @see getAttributes()
+     * @param string $name The attribute name.
+     * @param mixed $value The value of the attribute.
+     *
+     * @return Request
+     */
+    public function withAttribute($name, $value)
+    {
+        $request = clone $this;
+        $request->attributes[$name] = $value;
+        return $request;
+    }
+
+    /**
+     * Retrieve a single derived request attribute.
+     *
+     * Retrieves a single derived request attribute as described in
+     * getAttributes(). If the attribute has not been previously set, returns
+     * the default value as provided.
+     *
+     * @see getAttributes()
+     * @param string $name The attribute name.
+     * @param mixed $default Default value to return if the attribute does not exist.
+     * @return mixed
+     */
+    public function getAttribute($name, $default = null)
+    {
+        if (array_key_exists($name, $this->attributes)) {
+            $default = $this->attributes[$name];
+        }
+        return $default;
+    }
+
+    /**
+     * Return an instance that removes the specified derived request attribute.
+     *
+     * This method allows removing a single derived request attribute as
+     * described in getAttributes().
+     *
+     * @see getAttributes()
+     * @param string $name The attribute name.
+     *
+     * @return Request
+     */
+    public function withoutAttribute($name)
+    {
+        $request = clone $this;
+        if (array_key_exists($name, $request->attributes)) {
+            unset($request->attributes[$name]);
+        }
+        return $request;
+    }
 
 }
