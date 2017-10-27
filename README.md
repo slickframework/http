@@ -23,6 +23,54 @@ $ composer require slick/configuration
 
 ## Usage
 
+### Server Request Message
+
+This is an handy way to have a HTTP request message that has all necessary information that was sent by
+the client to the server.
+
+Its very simple to get this:
+``` php
+use Slick\Http\Message\Server\Request;
+
+$request = new Request();
+```
+
+The ``$request`` encapsulates all data as it has arrived at the
+application from the CGI and/or PHP environment, including:
+ - The values represented in $_SERVER.
+ - Any cookies provided (generally via $_COOKIE)
+ - Query string arguments (generally via $_GET, or as parsed via parse_str())
+ - Upload files, if any (as represented by $_FILES)
+ - Deserialized body parameters (generally from $_POST)
+
+Consider the following message:
+``` txt
+POST /path?_goto=home HTTP/1.1
+Host: www.example.org
+Content-Type: application/x-www-form-urlencoded; charset=utf-8
+Content-Lenght: 5
+Authorization: Bearer PAOIPOI-ASD9POKQWEL-KQWELKAD==
+
+foo=bar&bar=baz
+
+```
+Now lest retrieve its information using the ``$request`` object:
+
+``` php
+echo $request->getHeaderLine('Authorization');  // will print "Bearer PAOIPOI-ASD9POKQWEL-KQWELKAD=="
+
+print_r($request->getParsedBody());
+# Array (
+#   [foo] => bar,
+#   [bar] => baz
+#)
+
+print_r($request->getQueryParam());
+# Array (
+#   [_goto] => home
+#)
+```
+
 ### HTTP Client
 
 Create a simple request;

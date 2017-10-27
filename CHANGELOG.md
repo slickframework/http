@@ -7,14 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [Unreleased]
 ## Added
+- ``Slick\Http\Message\Server\Request`` wraps all environment information regarding incoming request
+- ``Slick\Http\Message\Server\BodyParserInterface`` with allows you to define how ``Request::getParsedBody()``
+  returned data will be parsed
+- JSON, XML and simple text body parsers
 - Use PHPSpec for unit tests 
 - Code of conduct
 - Issue template
 - Pull request template
 - Documentation on [Read the docs](https://readthedocs.org/) at [HTTP documentation](http://http.slick-framework.com)
 
+## Changed
+- Uploaded files respects the tree dept that was submitted
+
 ## Removed
-- ``Slick/Common`` dependency
+- ``Slick\Http\Stream`` Use one of ``Slick\Http\Message\Stream`` implementations
+- ``Slick\Http\PhpEnvironment`` the new ``Slick\Http\Message\Server`` is a more descriptive
+  path and is strict with the PSR-7 interface
+- ``Slick\Common`` dependency
 - Test suit with PHPUnit
 
 ## [1.2.3] - 2016-06-23
