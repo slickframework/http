@@ -23,6 +23,7 @@
     }
   },
   "require": {
+    "http-interop/http-middleware": "^1.0@dev",
     "psr/http-message": "^1.0"
   },
   "require-dev": {

@@ -9,6 +9,7 @@
 
 namespace Slick\Http\Message\Server;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Slick\Http\Message\Exception\InvalidArgumentException;
@@ -21,7 +22,7 @@ use Slick\Http\Message\Uri;
  *
  * @package Slick\Http\Message\Server
 */
-class Request extends HttpRequest
+class Request extends HttpRequest implements ServerRequestInterface
 {
 
     /**
