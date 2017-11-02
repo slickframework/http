@@ -6,9 +6,9 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-`Slick/Configuration` is a simple package that deals with configuration files. It has a very simple
-interface that you can use to set your own configuration drivers. By default it uses the PHP arrays
-for configuration as it does not need any parser and therefore is more performance friendly.
+`Slick/Http` is an useful library for HTTP foundation. It implements the PSR-7 message
+interface and has simple middleware dispatcher based on the PSR-15 middleware interfaces proposal
+that can help you dealing with HTTP requests and use other middleware packages to compose it.
 
 This package is compliant with PSR-2 code standards and PSR-4 autoload standards. It
 also applies the [semantic version 2.0.0](http://semver.org) specification.
@@ -71,34 +71,6 @@ print_r($request->getQueryParam());
 #)
 ```
 
-### HTTP Client
-
-Create a simple request;
-```php
-use Slick\Http\Request;
-
-$request = new Request(
-    Request::GET,
-    '/posts',
-    ['Authorization' => 'Basic iuoqywer87324:owiuyqwe9r']
-);
-```
-
-The above requests represents the following HTTP message:
-```txt
-GET /posts HTTP/1.0
-Authorization: Basic iuoqywer87324:owiuyqwe9r
-```
-Now lets send this request to our API server:
-
-```php
-use Slick\Http\Client;
-
-$client = new Client(['base_uri' => 'https://example.com']);
-$response = $client->send($request);
-
-$data = json_decode($response->getBody()->getContents());
-```
 
 ### HTTP Server
 
@@ -110,19 +82,21 @@ Lets create a simple web application that will print out a greeting to a query p
 named 'name'. Lets first create our middleware classes:
 
 ```php
-use Slick\Http\Server\MiddlewareInterface;
-use Slick\Http\Server\AbstractMiddleware;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 
-class Greeting extends AbstractMiddleware implements MiddlewareInterface
+class Greeting implements MiddlewareInterface
 {
   
-    public function handle(
-        ServerRequestInterface $request, ResponseInterface $response
-    ) {
-      $name = $request->getQuery('name', null);
-      $request = $request->withAttribute('greeting', "Hello {$name}!");
-      
-      return $this->executeNext($request, $response);
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    {
+        $params = $request->getQueryParams();
+        $request = (isset($params['name'])
+            ? $request->withAttribute('greeting', "Hello, {$params['name']}!")
+            : $request;
+        
+        $response = $handler->handle($request);
+        return $response;
     }
 }
 ```
@@ -130,20 +104,22 @@ This middleware retrieves the query parameter with name and add an attribute to 
 request object passed to the next middleware in the stack. Lets create our printer:
 
 ```php
-use Slick\Http\Server\MiddlewateInterface;
-use Slick\Http\Server\AbstractMiddlewate;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 
-class Printer extends AbstractMiddlewate implements MiddlewateInterface
+class Printer implements MiddlewateInterface
 {
   
-    public function handle(
-        ServerRequestInterface $request, ResponseInterface $response
-    ) {
-      $greeting = $this->request->getAttribute('greeting', false);
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    {
+      $greeting = $request->getAttribute('greeting', false);
       $text = $greeting ?: 'Hi!';
+      
+      $response = $handler->handle($request);
+      
       $response->getBody()->write($text);
       
-      return $this->executeNext($request, $response);
+      return $response;
     }
 }
 ```
@@ -151,17 +127,25 @@ class Printer extends AbstractMiddlewate implements MiddlewateInterface
 Now lets create our main server application:
 
 ```php
-use Slick\Http\Server;
+use Slick\Http\Server\MiddlewareStack;
+use Slick\Http\Message\Response;
+use Slick\Http\Message\Server\Request;
 
-$server = new Server();
+$stack = (new MiddlewareStack())
+    ->push(new Greeting())
+    ->push(new Printer())
+    ->push(function () { return new Response(200); }); // Order matters!
 
-$server
-  ->add(new Greeting())
-  ->add(new Printer()); // Order matters!
-  
-$response = $server->run();
+$response = $stack->process(new Request);
 
-$response->send(); // sends out the processed response.
+// Emit headers iteratively:
+foreach ($response->getHeaders() as $name => $values) {
+    header(sprintf('%s: %s', $name, implode(', ', $value)), false);
+}
+
+// Print out the message body
+echo $response->getBody();
+
 ```
 
 ### Session
@@ -179,7 +163,7 @@ $session = Session::create();
 $session->set('foo', 'bar');
 ```
 
-##### Readwing session data
+##### Read session data
 ```php
 $session->read('foo', null); // if foo is not found the default (null) will be returned.
 ```
