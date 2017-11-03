@@ -174,11 +174,11 @@ $session->erase('foo');
 ```
 
 You can create your own session drivers if you need to encrypt you data or change the save
-handler to save in a database by simply implementing the `Slick\Http\SessionDriverInterface`.
+handler to save in a database by simply implementing the `Slick\Http\Session\SessionDriverInterface`.
 It also comes with a `Slick\Http\Session\Driver\AbstractDriver` class that has all the basic
-operations of the interface implemented.
+operations of the interface already implemented.
 
-Please check (documentation site)[http://configuration.slick-framework.com] for a complete reference. 
+Please check (documentation site)[http://http.slick-framework.com] for a complete reference. 
 
 ## Change log
 

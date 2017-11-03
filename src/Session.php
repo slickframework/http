@@ -59,7 +59,7 @@ final class Session
      * @throws ClassNotFoundException if class does not exists
      * @throws InvalidDriverClassException if class does not implement the SessionDriverInterface
      */
-    public static function create($driverClass, array $options = [])
+    public static function create($driverClass = self::DRIVER_SERVER, array $options = [])
     {
         $session = new Session($driverClass, $options);
         return $session->initialize();
