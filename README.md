@@ -1,16 +1,14 @@
-# Slick Http package
+# Slick Configuration
 
-[![Latest Version](https://img.shields.io/github/release/slickframework/http.svg?style=flat-square)](https://github.com/slickframework/http/releases)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/slickframework/http/master.svg?style=flat-square)](https://travis-ci.org/slickframework/http)
-[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/slickframework/http/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/slickframework/http/code-structure?branch=master)
-[![Quality Score](https://img.shields.io/scrutinizer/g/slickframework/http/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/slickframework/http?branch=master)
-[![Total Downloads](https://img.shields.io/packagist/dt/slick/http.svg?style=flat-square)](https://packagist.org/packages/slick/http)
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE.md)
+[![Build Status][ico-travis]][link-travis]
+[![Quality Score][ico-code-quality]][link-code-quality]
+[![Total Downloads][ico-downloads]][link-downloads]
 
-`Slick/Http` is an useful library for Web  application foundation. It implements the PSR-7
-message interface and has simple middleware server where you can build on top of. You Can
-also add session handling to the mix and even create a session driver that fit your needs.
-For API request it has a client witch is a wrapper to the extraordinary GuzzleHttp library.
+`Slick/Http` is an useful library for HTTP foundation. It implements the PSR-7 message
+interface and has simple middleware dispatcher based on the PSR-15 middleware interfaces proposal
+that can help you dealing with HTTP requests and use other middleware packages to compose it.
 
 This package is compliant with PSR-2 code standards and PSR-4 autoload standards. It
 also applies the [semantic version 2.0.0](http://semver.org) specification.
@@ -20,39 +18,59 @@ also applies the [semantic version 2.0.0](http://semver.org) specification.
 Via Composer
 
 ``` bash
-$ composer require slick/http
+$ composer require slick/configuration
 ```
 
 ## Usage
 
-### HTTP Client
+### Server Request Message
 
-Create a simple request;
-```php
-use Slick\Http\Request;
+This is an handy way to have a HTTP request message that has all necessary information that was sent by
+the client to the server.
 
-$request = new Request(
-    Request::GET,
-    '/posts',
-    ['Authorization' => 'Basic iuoqywer87324:owiuyqwe9r']
-);
+Its very simple to get this:
+``` php
+use Slick\Http\Message\Server\Request;
+
+$request = new Request();
 ```
 
-The above requests represents the following HTTP message:
-```txt
-GET /posts HTTP/1.0
-Authorization: Basic iuoqywer87324:owiuyqwe9r
+The ``$request`` encapsulates all data as it has arrived at the
+application from the CGI and/or PHP environment, including:
+ - The values represented in $_SERVER.
+ - Any cookies provided (generally via $_COOKIE)
+ - Query string arguments (generally via $_GET, or as parsed via parse_str())
+ - Upload files, if any (as represented by $_FILES)
+ - Deserialized body parameters (generally from $_POST)
+
+Consider the following message:
+``` txt
+POST /path?_goto=home HTTP/1.1
+Host: www.example.org
+Content-Type: application/x-www-form-urlencoded; charset=utf-8
+Content-Lenght: 5
+Authorization: Bearer PAOIPOI-ASD9POKQWEL-KQWELKAD==
+
+foo=bar&bar=baz
+
 ```
-Now lets send this request to our API server:
+Now lest retrieve its information using the ``$request`` object:
 
-```php
-use Slick\Http\Client;
+``` php
+echo $request->getHeaderLine('Authorization');  // will print "Bearer PAOIPOI-ASD9POKQWEL-KQWELKAD=="
 
-$client = new Client(['base_uri' => 'https://example.com']);
-$response = $client->send($request);
+print_r($request->getParsedBody());
+# Array (
+#   [foo] => bar,
+#   [bar] => baz
+#)
 
-$data = json_decode($response->getBody()->getContents());
+print_r($request->getQueryParam());
+# Array (
+#   [_goto] => home
+#)
 ```
+
 
 ### HTTP Server
 
@@ -64,19 +82,21 @@ Lets create a simple web application that will print out a greeting to a query p
 named 'name'. Lets first create our middleware classes:
 
 ```php
-use Slick\Http\Server\MiddlewareInterface;
-use Slick\Http\Server\AbstractMiddleware;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 
-class Greeting extends AbstractMiddleware implements MiddlewareInterface
+class Greeting implements MiddlewareInterface
 {
   
-    public function handle(
-        ServerRequestInterface $request, ResponseInterface $response
-    ) {
-      $name = $request->getQuery('name', null);
-      $request = $request->withAttribute('greeting', "Hello {$name}!");
-      
-      return $this->executeNext($request, $response);
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    {
+        $params = $request->getQueryParams();
+        $request = (isset($params['name'])
+            ? $request->withAttribute('greeting', "Hello, {$params['name']}!")
+            : $request;
+        
+        $response = $handler->handle($request);
+        return $response;
     }
 }
 ```
@@ -84,20 +104,22 @@ This middleware retrieves the query parameter with name and add an attribute to 
 request object passed to the next middleware in the stack. Lets create our printer:
 
 ```php
-use Slick\Http\Server\MiddlewateInterface;
-use Slick\Http\Server\AbstractMiddlewate;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 
-class Printer extends AbstractMiddlewate implements MiddlewateInterface
+class Printer implements MiddlewateInterface
 {
   
-    public function handle(
-        ServerRequestInterface $request, ResponseInterface $response
-    ) {
-      $greeting = $this->request->getAttribute('greeting', false);
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    {
+      $greeting = $request->getAttribute('greeting', false);
       $text = $greeting ?: 'Hi!';
+      
+      $response = $handler->handle($request);
+      
       $response->getBody()->write($text);
       
-      return $this->executeNext($request, $response);
+      return $response;
     }
 }
 ```
@@ -105,17 +127,25 @@ class Printer extends AbstractMiddlewate implements MiddlewateInterface
 Now lets create our main server application:
 
 ```php
-use Slick\Http\Server;
+use Slick\Http\Server\MiddlewareStack;
+use Slick\Http\Message\Response;
+use Slick\Http\Message\Server\Request;
 
-$server = new Server();
+$stack = (new MiddlewareStack())
+    ->push(new Greeting())
+    ->push(new Printer())
+    ->push(function () { return new Response(200); }); // Order matters!
 
-$server
-  ->add(new Greeting())
-  ->add(new Printer()); // Order matters!
-  
-$response = $server->run();
+$response = $stack->process(new Request);
 
-$response->send(); // sends out the processed response.
+// Emit headers iteratively:
+foreach ($response->getHeaders() as $name => $values) {
+    header(sprintf('%s: %s', $name, implode(', ', $value)), false);
+}
+
+// Print out the message body
+echo $response->getBody();
+
 ```
 
 ### Session
@@ -133,7 +163,7 @@ $session = Session::create();
 $session->set('foo', 'bar');
 ```
 
-##### Readwing session data
+##### Read session data
 ```php
 $session->read('foo', null); // if foo is not found the default (null) will be returned.
 ```
@@ -144,30 +174,49 @@ $session->erase('foo');
 ```
 
 You can create your own session drivers if you need to encrypt you data or change the save
-handler to save in a database by simply implementing the `Slick\Http\SessionDriverInterface`.
+handler to save in a database by simply implementing the `Slick\Http\Session\SessionDriverInterface`.
 It also comes with a `Slick\Http\Session\Driver\AbstractDriver` class that has all the basic
-operations of the interface implemented.
+operations of the interface already implemented.
+
+Please check (documentation site)[http://http.slick-framework.com] for a complete reference. 
+
+## Change log
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Testing
 
 ``` bash
-$ vendor/bin/phpunit
+$ composer test
 ```
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](CONTRIBUTING.md) and [CODE_OF_CONDUCT](CONDUCT.md) for details.
 
 ## Security
 
-If you discover any security related issues, please email silvam.filipe@gmail.com instead of using the issue tracker.
+If you discover any security related issues, please email slick.framework@gmail.com instead of using the issue tracker.
 
 ## Credits
 
-- [Slick framework](https://github.com/slickframework)
-- [All Contributors](https://github.com/slickframework/common/graphs/contributors)
+- [All Contributors][link-contributors]
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+[ico-version]: https://img.shields.io/packagist/v/slick/http.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/slickframework/http/master.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/slickframework/http.svg?style=flat-square
+[ico-code-quality]: https://img.shields.io/scrutinizer/g/slickframework/http.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/slick/http.svg?style=flat-square
+
+[link-packagist]: https://packagist.org/packages/slick/http
+[link-travis]: https://travis-ci.org/slickframework/http
+[link-scrutinizer]: https://scrutinizer-ci.com/g/slickframework/http/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/slickframework/http
+[link-downloads]: https://packagist.org/packages/slickframework/http
+[link-contributors]: https://github.com/slickframework/http/graphs/contributors
 
