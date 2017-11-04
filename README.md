@@ -18,7 +18,7 @@ also applies the [semantic version 2.0.0](http://semver.org) specification.
 Via Composer
 
 ``` bash
-$ composer require slick/configuration
+$ composer require slick/http
 ```
 
 ## Usage
@@ -148,6 +148,38 @@ echo $response->getBody();
 
 ```
 
+### HTTP Client
+
+Working with HTTP requests (as a client) is one of the most common tasks nowadays. Almost every application
+need to retrieve data from a web service or API and therefore an HTTP client is a must have.
+
+``Slick\Http\Client\CurlHttpClient`` has a very simple interface:
+
+``` php
+public function send(RequestInterface $request): PromiseInterface
+```
+
+It depends of ``React\Promise`` and PHP's ``cURL`` extension to connect and make HTTP requests.
+Lets see an example:
+
+``` php
+use Psr\Http\Message\ResponseInterface;
+use Slick\Http\Client\CurlHttpClient;
+use Slick\Http\Message\Request;
+use Slick\Http\Message\Uri;
+
+$request = new Request('GET', new Uri('https://example.com'));
+$client = new CurlHttpClient();
+
+$promise = $client->send($request);
+
+$promise->then(
+    function(ResponseInterface $response) { // handles the success response },
+    function($failureReason) { // handles the failed request },
+);
+
+```
+
 ### Session
 
 `Slick\Http\Session` has a very simple and ease implementation. By default it will use the
@@ -178,7 +210,7 @@ handler to save in a database by simply implementing the `Slick\Http\Session\Ses
 It also comes with a `Slick\Http\Session\Driver\AbstractDriver` class that has all the basic
 operations of the interface already implemented.
 
-Please check (documentation site)[http://http.slick-framework.com] for a complete reference. 
+Please check [documentation site](http://http.slick-framework.com) for a complete reference. 
 
 ## Change log
 
