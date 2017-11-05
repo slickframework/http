@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of slick/http package
+ * This file is part of slick/http
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -9,18 +9,15 @@
 
 namespace Slick\Http\Session\Driver;
 
-use Slick\Common\Base;
-use Slick\Http\SessionDriverInterface;
+use Slick\Http\Session\SessionDriverInterface;
 
 /**
- * Null session driver
+ * NullDriver
  *
  * @package Slick\Http\Session\Driver
- * @author  Filipe Silva <silvam.fiipe@gmail.com>
- */
-class NullDriver extends Base implements SessionDriverInterface
+*/
+class NullDriver implements SessionDriverInterface
 {
-
     /**
      * Returns the value store with provided key or the default value.
      *
