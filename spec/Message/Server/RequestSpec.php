@@ -26,6 +26,7 @@ class RequestSpec extends ObjectBehavior
     public function __construct()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '/';
     }
 
     function its_an_http_request_message_with_client_incoming_data()
