@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "09e1cf36d8974fb9b2462f3859e675fb",
+    "content-hash": "09709c1301f95ac2b0d55605b8d70884",
     "packages": [
         {
             "name": "http-interop/http-middleware",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/http-interop/http-middleware.git",
-                "reference": "b49e1f9f6c584e704317b563302e566b8ce11858"
+                "reference": "f63e458efdb11cc566d293d8737c7e7ca659ffd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/http-interop/http-middleware/zipball/b49e1f9f6c584e704317b563302e566b8ce11858",
-                "reference": "b49e1f9f6c584e704317b563302e566b8ce11858",
+                "url": "https://api.github.com/repos/http-interop/http-middleware/zipball/f63e458efdb11cc566d293d8737c7e7ca659ffd1",
+                "reference": "f63e458efdb11cc566d293d8737c7e7ca659ffd1",
                 "shasum": ""
             },
             "require": {
@@ -55,7 +55,8 @@
                 "request",
                 "response"
             ],
-            "time": "2017-09-18 15:27:03"
+            "abandoned": "http-interop/http-server-middleware",
+            "time": "2017-11-09 19:03:39"
         },
         {
             "name": "psr/http-message",
@@ -481,12 +482,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "c9b8c6088acd19d769d4cc0ffa60a9fe34344bd6"
+                "reference": "ddd9d7ffff1d7c3acd1a79a8e21d5ee5ea7beace"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/c9b8c6088acd19d769d4cc0ffa60a9fe34344bd6",
-                "reference": "c9b8c6088acd19d769d4cc0ffa60a9fe34344bd6",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/ddd9d7ffff1d7c3acd1a79a8e21d5ee5ea7beace",
+                "reference": "ddd9d7ffff1d7c3acd1a79a8e21d5ee5ea7beace",
                 "shasum": ""
             },
             "require": {
@@ -498,7 +499,7 @@
             },
             "require-dev": {
                 "phpspec/phpspec": "^2.5|^3.2",
-                "phpunit/phpunit": "^4.8 || ^5.6.5"
+                "phpunit/phpunit": "^4.8.35 || ^5.7"
             },
             "type": "library",
             "extra": {
@@ -536,7 +537,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2017-09-04T11:05:03+00:00"
+            "time": "2017-11-07T12:00:44+00:00"
         },
         {
             "name": "psr/log",
@@ -827,12 +828,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "8e5f4d2b26b0a158bd7c83ffc780ffcd08fd3bb3"
+                "reference": "a2e7a0bb621a55647877608ae202175086444595"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/8e5f4d2b26b0a158bd7c83ffc780ffcd08fd3bb3",
-                "reference": "8e5f4d2b26b0a158bd7c83ffc780ffcd08fd3bb3",
+                "url": "https://api.github.com/repos/symfony/console/zipball/a2e7a0bb621a55647877608ae202175086444595",
+                "reference": "a2e7a0bb621a55647877608ae202175086444595",
                 "shasum": ""
             },
             "require": {
@@ -888,7 +889,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2017-10-24T14:40:29+00:00"
+            "time": "2017-11-07T14:20:24+00:00"
         },
         {
             "name": "symfony/debug",
@@ -952,12 +953,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "494b359278b7f3a88527f40deda3227df301330a"
+                "reference": "ca20b8f9ef149f40ff656d52965f240d85f7a8e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/494b359278b7f3a88527f40deda3227df301330a",
-                "reference": "494b359278b7f3a88527f40deda3227df301330a",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/ca20b8f9ef149f40ff656d52965f240d85f7a8e4",
+                "reference": "ca20b8f9ef149f40ff656d52965f240d85f7a8e4",
                 "shasum": ""
             },
             "require": {
@@ -1007,7 +1008,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2017-10-24T14:12:06+00:00"
+            "time": "2017-11-09T14:14:31+00:00"
         },
         {
             "name": "symfony/finder",
@@ -1015,12 +1016,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "29422c4e871dd668ecac0e8075cf64dccdabff46"
+                "reference": "dac8d7db537bac7ad8143eb11360a8c2231f251a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/29422c4e871dd668ecac0e8075cf64dccdabff46",
-                "reference": "29422c4e871dd668ecac0e8075cf64dccdabff46",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/dac8d7db537bac7ad8143eb11360a8c2231f251a",
+                "reference": "dac8d7db537bac7ad8143eb11360a8c2231f251a",
                 "shasum": ""
             },
             "require": {
@@ -1056,7 +1057,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2017-10-24T14:12:06+00:00"
+            "time": "2017-11-05T16:10:10+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1123,12 +1124,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "ae1f0fe7202afcdd0ea905fe88b14c05e1be5a46"
+                "reference": "dce0aaed6962844b680b9a98a163e2f5f768752b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/ae1f0fe7202afcdd0ea905fe88b14c05e1be5a46",
-                "reference": "ae1f0fe7202afcdd0ea905fe88b14c05e1be5a46",
+                "url": "https://api.github.com/repos/symfony/process/zipball/dce0aaed6962844b680b9a98a163e2f5f768752b",
+                "reference": "dce0aaed6962844b680b9a98a163e2f5f768752b",
                 "shasum": ""
             },
             "require": {
@@ -1164,7 +1165,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2017-10-24T14:12:06+00:00"
+            "time": "2017-11-05T16:10:10+00:00"
         },
         {
             "name": "symfony/yaml",
