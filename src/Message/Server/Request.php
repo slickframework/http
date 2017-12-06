@@ -75,13 +75,15 @@ class Request extends HttpRequest implements ServerRequestInterface
 
         parent::__construct($method, $target, $body, $headers);
         $this->loadHeaders();
+
+        $this->setUri(RequestUriFactory::create($this));
     }
 
     /**
      * Retrieve server parameters.
      *
      * Retrieves data related to the incoming request environment,
-     * typically derived from PHP's $_SERVER superglobal.
+     * typically derived from PHP's $_SERVER super-global.
      *
      * @return array
      */
