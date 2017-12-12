@@ -10,7 +10,7 @@
     "PSR-7",
     "PSR-15"
   ],
-  "version": "v2.0.0-RC2",
+  "version": "v2.0.0-RC3",
   "minimum-stability": "dev",
   "authors": [
     {
