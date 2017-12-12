@@ -243,8 +243,10 @@ class Request extends HttpRequest implements ServerRequestInterface
      */
     private function loadHeaders()
     {
+        $fromServer = [];
         foreach($_SERVER as $key => $value) {
-            if (substr($key, 0, 5) <> 'HTTP_') {
+            $subset = substr($key, 0, 5);
+            if ( $subset <> 'HTTP_' && $subset <> 'CONTE') {
                 continue;
             }
             $header = str_replace(
@@ -254,7 +256,7 @@ class Request extends HttpRequest implements ServerRequestInterface
                     str_replace('_', ' ', strtolower(substr($key, 5)))
                 )
             );
-            $this->headers[$this->headerKey($header)] = [$value];
+            $fromServer[$this->headerKey($header)] = [$value];
         }
     }
 
