@@ -63,7 +63,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      * @param null|string|UriInterface $target
      * @param array                    $headers
      */
-    public function __construct($method = null, $target = null, $body = '', array $headers = [])
+    public function __construct($method = null, $target = null, $body = null, array $headers = [])
     {
         $method = null === $method
             ? $this->getServerParams()['REQUEST_METHOD']
