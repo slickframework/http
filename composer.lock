@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7625ec2213fa5d0c1b20dadff1edd9dd",
+    "content-hash": "3f03070670a4273c78029f85ce3aebb3",
     "packages": [
         {
             "name": "http-interop/http-middleware",
@@ -110,23 +110,23 @@
         },
         {
             "name": "react/promise",
-            "version": "dev-master",
+            "version": "2.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/promise.git",
-                "reference": "21b667ccb7daf3103186c3ff5a6b8b604357f203"
+                "reference": "179520ec0b25cf4c742d9653be9f4964d64d4a6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/promise/zipball/21b667ccb7daf3103186c3ff5a6b8b604357f203",
-                "reference": "21b667ccb7daf3103186c3ff5a6b8b604357f203",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/179520ec0b25cf4c742d9653be9f4964d64d4a6e",
+                "reference": "179520ec0b25cf4c742d9653be9f4964d64d4a6e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.8.35 || ~5.7 || ~6.4"
+                "phpunit/phpunit": "~4.8"
             },
             "type": "library",
             "autoload": {
@@ -152,7 +152,7 @@
                 "promise",
                 "promises"
             ],
-            "time": "2017-12-02T10:31:07+00:00"
+            "time": "2017-09-19T13:02:44+00:00"
         }
     ],
     "packages-dev": [
@@ -1279,8 +1279,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "http-interop/http-middleware": 20,
-        "react/promise": 20
+        "http-interop/http-middleware": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
