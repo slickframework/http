@@ -10,7 +10,7 @@
     "PSR-7",
     "PSR-15"
   ],
-  "version": "v2.0.0-RC5",
+  "version": "v2.0.0-RC6",
   "minimum-stability": "dev",
   "authors": [
     {
@@ -27,7 +27,7 @@
   "require": {
     "http-interop/http-middleware": "^1.0@dev",
     "psr/http-message": "^1.0",
-    "react/promise": "dev-master"
+    "react/promise": "^2.5"
   },
   "require-dev": {
     "phpspec/phpspec": "^3.4"
