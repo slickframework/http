@@ -38,6 +38,7 @@ class CurlHttpClientSpec extends ObjectBehavior
             'Content-Type' => ['application/json', 'charset=utf-8']
         ]);
         $request->getBody()->willReturn(new TextStream('Hello test!'));
+        $request->getRequestTarget()->willReturn('/some/path?foo=bar');
         $this->beConstructedWith(
             new Uri('https://example.com'),
             new HttpClientAuthentication('john', 'secret'),
@@ -103,7 +104,7 @@ class CurlHttpClientSpec extends ObjectBehavior
         $this->send($request);
         if (
             ! isset(CurlState::$options[CURLOPT_URL]) ||
-            CurlState::$options[CURLOPT_URL] != 'https://example.com/'
+            CurlState::$options[CURLOPT_URL] != 'https://example.com/some/path?foo=bar'
         ) {
             throw new FailureException("URL from constructor was not set...");
         }
@@ -111,7 +112,7 @@ class CurlHttpClientSpec extends ObjectBehavior
 
     function it_can_infer_url_from_request_uri(RequestInterface $request)
     {
-        $uri = new Uri('http://example.org');
+        $uri = new Uri('http://example.org/some/path?foo=bar');
         $request->getUri()->willReturn($uri);
         $this->beConstructedWith();
         $this->send($request);

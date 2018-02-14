@@ -29,7 +29,7 @@ class FileStream extends AbstractStream implements StreamInterface
      */
     public function __construct($file)
     {
-        if (! is_file($file)) {
+        if (!filter_var($file, FILTER_VALIDATE_URL) && !is_file($file)) {
             throw new InvalidArgumentException(
                 "Cannot create stream: given file is not found."
             );

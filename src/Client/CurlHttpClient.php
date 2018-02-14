@@ -147,9 +147,18 @@ final class CurlHttpClient implements HttpClientInterface
      */
     private function setUrl(RequestInterface $request)
     {
+        $target = $request->getRequestTarget();
+        $parts = parse_url($target);
+
         $uri = $this->url instanceof Uri
             ? $this->url
             : $request->getUri();
+
+        $uri = $uri->withPath($parts['path']);
+        $uri = array_key_exists('query', $parts)
+            ? $uri->withQuery($parts['query'])
+            : $uri;
+
         $this->options[CURLOPT_URL] = (string) $uri;
     }
 
