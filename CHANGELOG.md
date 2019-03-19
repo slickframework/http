@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [Unreleased]
 ## Added
-- ``Slick\Http\Server\MiddlewareStack`` based on the [PSR-15 proposal](https://github.com/php-fig/fig-standards/blob/master/proposed/http-middleware/middleware.md)
+- ``Slick\Http\Server\MiddlewareStack`` based on the [PSR-15 proposal](https://www.php-fig.org/psr/psr-15/)
 - ``Slick\Http\HttpClientInterface`` and an implementation using the PHP's ``cURL`` extension
 - ``Slick\Http\Message\Server\Request`` wraps all environment information regarding incoming request
 - ``Slick\Http\Message\Server\BodyParserInterface`` with allows you to define how ``Request::getParsedBody()``
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Code of conduct
 - Issue template
 - Pull request template
-- Documentation on [Read the docs](https://readthedocs.org/) at [HTTP documentation](http://http.slick-framework.com)
+- Documentation on [Read the docs](https://readthedocs.org/) at [Slick documentation](http://www.slick-framework.com)
 
 ## Changed
 - Uploaded files respects the tree dept that was submitted
@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - ``Slick\Common`` dependency
 - Test suit with PHPUnit
 - HTTP Client ``guzzlehttp/guzzle`` dependency
+- Support for PHP5.6 and 7.0
 
 ## [v1.2.3] - 2016-06-23
 ### Added

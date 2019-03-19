@@ -9,7 +9,7 @@
 
 namespace Slick\Http\Server;
 
-use Interop\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slick\Http\Server\Exception\InvalidArgumentException;

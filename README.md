@@ -82,7 +82,7 @@ Lets create a simple web application that will print out a greeting to a query p
 named 'name'. Lets first create our middleware classes:
 
 ```php
-use Interop\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Interop\Http\Server\RequestHandlerInterface;
 
 class Greeting implements MiddlewareInterface
@@ -104,7 +104,7 @@ This middleware retrieves the query parameter with name and add an attribute to 
 request object passed to the next middleware in the stack. Lets create our printer:
 
 ```php
-use Interop\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Interop\Http\Server\RequestHandlerInterface;
 
 class Printer implements MiddlewateInterface

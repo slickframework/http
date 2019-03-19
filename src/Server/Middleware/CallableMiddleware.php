@@ -9,10 +9,10 @@
 
 namespace Slick\Http\Server\Middleware;
 
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Slick\Http\Message\Response;
 use Slick\Http\Message\Stream\TextStream;
 use Slick\Http\Server\Exception\UnexpectedValueException;
@@ -78,8 +78,13 @@ class CallableMiddleware implements MiddlewareInterface
     public function process(
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
-    )
-    {
-        return self::execute($this->callable, [$request, $handler]);
+    ): ResponseInterface {
+        $response = self::execute($this->callable, [$request, $handler]);
+        if (!$response instanceof ResponseInterface ) {
+            throw new UnexpectedValueException(
+                sprintf('The middleware must return an instance of %s', ResponseInterface::class)
+            );
+        }
+        return $response;
     }
 }
