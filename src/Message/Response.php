@@ -101,7 +101,8 @@ class Response extends Message implements ResponseInterface
     {
         HttpCodes::check($status);
         $this->status = intval($status, 10);
-        if ($reasonPhrase === '')
+        if ($reasonPhrase === '') {
             $this->reasonPhrase = HttpCodes::reasonPhraseFor($this->status);
+        }
     }
 }
