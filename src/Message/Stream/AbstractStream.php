@@ -59,8 +59,9 @@ abstract class AbstractStream implements StreamInterface
      */
     public function close()
     {
-        if (is_resource($this->stream))
+        if (is_resource($this->stream)) {
             fclose($this->stream);
+        }
     }
 
     /**
@@ -84,7 +85,9 @@ abstract class AbstractStream implements StreamInterface
      */
     public function getSize()
     {
-        if (is_null($this->stream)) return null;
+        if (is_null($this->stream)) {
+            return null;
+        }
 
         $stats = fstat($this->stream);
         return $stats['size'];

@@ -42,8 +42,7 @@ abstract class HttpResponseException extends RuntimeException implements Excepti
         RequestInterface $request,
         ResponseInterface $response,
         Throwable $previous = null
-    )
-    {
+    ) {
         parent::__construct($response->getReasonPhrase(), $response->getStatusCode(), $previous);
         $this->request = $request;
         $this->response = $response;

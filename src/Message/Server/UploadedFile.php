@@ -186,7 +186,7 @@ final class UploadedFile implements UploadedFileInterface
         $this->checkUpload($targetPath);
 
         $exception = null;
-        set_error_handler(function ($number , $error) use (&$exception) {
+        set_error_handler(function ($number, $error) use (&$exception) {
             $exception = new RuntimeException(
                 "Cannot move uploaded file: ($number) {$error}"
             );

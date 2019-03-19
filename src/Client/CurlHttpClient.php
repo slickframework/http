@@ -181,7 +181,8 @@ final class CurlHttpClient implements HttpClientInterface
      *
      * @param resource $ch
      */
-    private function reset(&$ch){
+    private function reset(&$ch)
+    {
         $ch = curl_init();
     }
 
@@ -228,11 +229,11 @@ final class CurlHttpClient implements HttpClientInterface
         $lines = explode("\n", $header);
         $headers = [];
         foreach ($lines as $line) {
-            if (strpos($line, ':') === false ) {
+            if (strpos($line, ':') === false) {
                 continue;
             }
 
-            $middle=explode(":",$line);
+            $middle=explode(":", $line);
             $headers[trim($middle[0])] = trim($middle[1]);
         }
         return $headers;
@@ -273,7 +274,8 @@ final class CurlHttpClient implements HttpClientInterface
      */
     public function __destruct()
     {
-        if (is_resource($this->handler))
+        if (is_resource($this->handler)) {
             curl_close($this->handler);
+        }
     }
 }

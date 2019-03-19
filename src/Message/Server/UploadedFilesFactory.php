@@ -70,10 +70,10 @@ class UploadedFilesFactory
     {
         $result = [];
 
-        foreach($files as $field => $data) {
-            foreach($data as $key => $val) {
+        foreach ($files as $field => $data) {
+            foreach ($data as $key => $val) {
                 $result[$field] = [];
-                if(!is_array($val)) {
+                if (!is_array($val)) {
                     $result[$field] = $data;
                     continue;
                 }
@@ -96,8 +96,8 @@ class UploadedFilesFactory
      */
     private function filesFlip(&$result, $keys, $value)
     {
-        if(is_array($value)) {
-            foreach($value as $k => $v) {
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
                 $newKeys = $keys;
                 array_push($newKeys, $k);
                 $this->filesFlip($result, $newKeys, $v);
@@ -109,7 +109,7 @@ class UploadedFilesFactory
         // Move the innermost key to the outer spot
         $first = array_shift($keys);
         array_push($keys, $first);
-        foreach(array_reverse($keys) as $kk) {
+        foreach (array_reverse($keys) as $kk) {
             // You might think we'd say $res[$kk] = $res, but $res starts
             // out not as an array
             $res = array($kk => $res);
@@ -128,9 +128,11 @@ class UploadedFilesFactory
      */
     private function arrayMergeRecursive($array1, $array2)
     {
-        if (!is_array($array1) or !is_array($array2)) { return $array2; }
+        if (!is_array($array1) or !is_array($array2)) {
+            return $array2;
+        }
 
-        foreach ($array2 AS $sKey2 => $sValue2) {
+        foreach ($array2 as $sKey2 => $sValue2) {
             $array1[$sKey2] = $this->arrayMergeRecursive(@$array1[$sKey2], $sValue2);
         }
         return $array1;
