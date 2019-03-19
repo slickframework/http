@@ -9,8 +9,8 @@
 
 namespace spec\Slick\Http\Server;
 
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -59,7 +59,7 @@ class MiddlewareStackSpec extends ObjectBehavior
     {
         $mX2->process($request, Argument::type(RequestHandlerInterface::class))
             ->shouldBeCalled()
-            ->willReturn(new \StdClass);
+            ->willThrow(new UnexpectedValueException('Error'));
         $this->beConstructedWith([$mX2]);
         $this->shouldThrow(UnexpectedValueException::class)
             ->during('process', [$request]);

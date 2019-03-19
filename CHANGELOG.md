@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 [Unreleased]
+
+## [v2.0.0] - 2019-03-19
 ## Added
-- ``Slick\Http\Server\MiddlewareStack`` based on the [PSR-15 proposal](https://github.com/php-fig/fig-standards/blob/master/proposed/http-middleware/middleware.md)
+- ``Slick\Http\Server\MiddlewareStack`` based on the [PSR-15](https://www.php-fig.org/psr/psr-15/)
 - ``Slick\Http\HttpClientInterface`` and an implementation using the PHP's ``cURL`` extension
 - ``Slick\Http\Message\Server\Request`` wraps all environment information regarding incoming request
 - ``Slick\Http\Message\Server\BodyParserInterface`` with allows you to define how ``Request::getParsedBody()``
@@ -17,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Code of conduct
 - Issue template
 - Pull request template
-- Documentation on [Read the docs](https://readthedocs.org/) at [HTTP documentation](http://http.slick-framework.com)
+- Documentation on [Read the docs](https://readthedocs.org/) at [Slick documentation](http://www.slick-framework.com)
 
 ## Changed
 - Uploaded files respects the tree dept that was submitted
@@ -30,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - ``Slick\Common`` dependency
 - Test suit with PHPUnit
 - HTTP Client ``guzzlehttp/guzzle`` dependency
+- Support for PHP5.6 and 7.0
 
 ## [v1.2.3] - 2016-06-23
 ### Added
@@ -48,8 +51,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/slickframework/http/compare/v1.2.0...HEAD
-[v1.2.3]: https://github.com/slickframework/http/compare/v1.2.3...master
-[v1.2.2]: https://github.com/slickframework/http/compare/v1.2.2...master
-[v1.2.1]: https://github.com/slickframework/http/compare/v1.2.1...master
-[v1.2.0]: https://github.com/slickframework/http/compare/v1.2.0...master
+[Unreleased]: https://github.com/slickframework/http/compare/v2.0.0...HEAD
+[v2.0.0]: https://github.com/slickframework/http/compare/v1.2.3...v2.0.0
+[v1.2.3]: https://github.com/slickframework/http/compare/v1.2.2...v1.2.3
+[v1.2.2]: https://github.com/slickframework/http/compare/v1.2.1...v1.2.2
+[v1.2.1]: https://github.com/slickframework/http/compare/v1.2.0...v1.2.1
+[v1.2.0]: https://github.com/slickframework/http/compare/479ea2e...v1.2.0

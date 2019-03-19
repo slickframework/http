@@ -9,7 +9,7 @@
 
 namespace Slick\Http\Server;
 
-use Interop\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slick\Http\Server\Exception\InvalidArgumentException;
@@ -49,8 +49,7 @@ class MiddlewareStack
      */
     public function push($middleware)
     {
-        if (
-            ! $middleware instanceof MiddlewareInterface &&
+        if (! $middleware instanceof MiddlewareInterface &&
             ! is_callable($middleware)
         ) {
             throw new InvalidArgumentException(
@@ -86,11 +85,12 @@ class MiddlewareStack
      */
     private function resolve($index)
     {
-        return new RequestHandler(function(ServerRequestInterface $request) use ($index) {
+        return new RequestHandler(function (ServerRequestInterface $request) use ($index) {
 
             $middleware = isset($this->middlewareStack[$index])
                 ? $this->middlewareStack[$index]
-                : new CallableMiddleware(function () {});
+                : new CallableMiddleware(function () {
+                });
 
             if ($middleware instanceof \Closure) {
                 $middleware = new CallableMiddleware($middleware);
@@ -106,6 +106,5 @@ class MiddlewareStack
 
             return $response;
         });
-
     }
 }

@@ -9,12 +9,12 @@
 
 namespace spec\Slick\Http\Server\Middleware;
 
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use PhpSpec\Exception\Example\FailureException;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Slick\Http\Message\Server\Request;
 use Slick\Http\Server\Middleware\SessionMiddleware;
 use PhpSpec\ObjectBehavior;
@@ -45,12 +45,13 @@ class SessionMiddlewareSpec extends ObjectBehavior
 
     function it_add_a_session_driver_to_the_request(
         RequestHandlerInterface $handler,
-        ResponseInterface $response,
-        SessionDriverInterface $sessionDriver
+        ResponseInterface $response
     )
     {
         $request = new Request();
-        $handler->handle(Argument::that(function ($subject) {
+
+        /** @var ServerRequestInterface $serverRequest */
+        $serverRequest = Argument::that(function (ServerRequestInterface $subject) {
             $driver = $subject->getAttribute('sessionDriver');
             if (! $driver instanceof SessionDriverInterface) {
                 throw new FailureException(
@@ -59,7 +60,9 @@ class SessionMiddlewareSpec extends ObjectBehavior
             }
 
             return true;
-        }))
+        });
+
+        $handler->handle($serverRequest)
             ->shouldBeCalled()
             ->willReturn($response);
         $this->process($request, $handler)->shouldBe($response);

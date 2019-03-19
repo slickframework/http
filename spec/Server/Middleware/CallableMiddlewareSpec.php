@@ -9,9 +9,9 @@
 
 namespace spec\Slick\Http\Server\Middleware;
 
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Slick\Http\Message\Response;
 use Slick\Http\Server\Exception\UnexpectedValueException;
 use Slick\Http\Server\Middleware\CallableMiddleware;

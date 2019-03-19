@@ -9,9 +9,9 @@
 
 namespace Slick\Http\Server;
 
-use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * RequestHandler
@@ -42,7 +42,7 @@ class RequestHandler implements RequestHandlerInterface
      *
      * @return ResponseInterface
      */
-    public function handle(ServerRequestInterface $request)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $response = call_user_func($this->callback, $request);
         return $response;

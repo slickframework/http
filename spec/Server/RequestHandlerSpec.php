@@ -9,9 +9,9 @@
 
 namespace spec\Slick\Http\Server;
 
-use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Slick\Http\Message\Response;
 use Slick\Http\Message\Server\Request;
 use PhpSpec\ObjectBehavior;

@@ -44,7 +44,7 @@ class Request extends Message implements RequestInterface
      * @param null|string|UriInterface $target
      * @param array                    $headers
      */
-    public function __construct($method, $target = null ,$body = '', array $headers = [])
+    public function __construct($method, $target = null, $body = '', array $headers = [])
     {
         parent::__construct($body);
         $this->method = $method;
@@ -68,7 +68,9 @@ class Request extends Message implements RequestInterface
      */
     public function getRequestTarget()
     {
-        if (! $this->target && ! $this->uri) return '/';
+        if (! $this->target && ! $this->uri) {
+            return '/';
+        }
 
         return $this->target ? $this->target : $this->getTargetFromUri();
     }

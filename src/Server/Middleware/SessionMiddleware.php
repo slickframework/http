@@ -9,10 +9,10 @@
 
 namespace Slick\Http\Server\Middleware;
 
-use Interop\Http\Server\MiddlewareInterface;
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Slick\Http\Session\SessionDriverInterface;
 
 /**
@@ -45,7 +45,7 @@ class SessionMiddleware implements MiddlewareInterface
      *
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $request = $request->withAttribute('sessionDriver', $this->sessionDriver);
         return $handler->handle($request);

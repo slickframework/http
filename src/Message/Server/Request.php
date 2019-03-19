@@ -150,7 +150,7 @@ class Request extends HttpRequest implements ServerRequestInterface
     {
         $request = clone $this;
         $request->queryParams = $query;
-        returN $request;
+        return $request;
     }
 
     /**
@@ -243,9 +243,9 @@ class Request extends HttpRequest implements ServerRequestInterface
      */
     private function loadHeaders()
     {
-        foreach($_SERVER as $key => $value) {
+        foreach ($_SERVER as $key => $value) {
             $subset = substr($key, 0, 5);
-            if ( $subset <> 'HTTP_' && $subset <> 'CONTE') {
+            if ($subset <> 'HTTP_' && $subset <> 'CONTE') {
                 continue;
             }
             $header = str_replace(
@@ -286,8 +286,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      */
     public function withParsedBody($data)
     {
-        if (
-            ! is_null($data) &&
+        if (! is_null($data) &&
             ! is_array($data) &&
             ! is_object($data)
         ) {
@@ -376,5 +375,4 @@ class Request extends HttpRequest implements ServerRequestInterface
         }
         return $request;
     }
-
 }
