@@ -183,7 +183,7 @@ final class UploadedFile implements UploadedFileInterface
     {
         $this->checkMoved();
         $this->checkTargetDirExists($targetPath);
-        $this->checkUpload($targetPath);
+        $this->checkUpload();
 
         $exception = null;
         set_error_handler(function ($number, $error) use (&$exception) {
@@ -231,12 +231,10 @@ final class UploadedFile implements UploadedFileInterface
 
     /**
      * Checks if upload was successful
-     *
-     * @param $targetPath
      */
-    private function checkUpload($targetPath)
+    private function checkUpload()
     {
-        if (!is_uploaded_file($targetPath)) {
+        if (!is_uploaded_file($this->tmpFile)) {
             throw new RuntimeException(
                 "Cannot move uploaded file: the client file was not uploaded."
             );
