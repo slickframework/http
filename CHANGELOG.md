@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [Unreleased]
 
+## [v2.0.1] - 2020-03-07
+### Fixes
+- Move uploaded file always throws Upload failure exception
+
 ## [v2.0.0] - 2019-03-19
 ## Added
 - ``Slick\Http\Server\MiddlewareStack`` based on the [PSR-15](https://www.php-fig.org/psr/psr-15/)
