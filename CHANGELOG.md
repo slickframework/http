@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 [Unreleased]
+### Added
+- [PSR-18 HTTP Client](https://www.php-fig.org/psr/psr-18/) support
+### Changed
+- ``Slick\Http\Client\CurlHttpClient`` to implement ``Psr\Http\Client\ClientInterface``
+### Deprecates
+- ``Slick\Http\HttpClientInterface`` interface  and ``CurlHttpClient::send()``method
 
 ## [v2.0.1] - 2020-03-07
 ### Fixes

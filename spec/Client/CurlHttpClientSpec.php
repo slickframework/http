@@ -10,6 +10,9 @@
 namespace spec\Slick\Http\Client;
 
 use PhpSpec\Exception\Example\FailureException;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Client\NetworkExceptionInterface;
+use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use React\Promise\Promise;
@@ -48,9 +51,15 @@ class CurlHttpClientSpec extends ObjectBehavior
         );
     }
 
+    // TODO: Remove in next major version
     function its_an_http_client()
     {
         $this->shouldBeAnInstanceOf(HttpClientInterface::class);
+    }
+
+    function its_a_client_interface()
+    {
+        $this->shouldBeAnInstanceOf(ClientInterface::class);
     }
 
     function it_is_initializable()
@@ -58,6 +67,14 @@ class CurlHttpClientSpec extends ObjectBehavior
         $this->shouldHaveType(CurlHttpClient::class);
     }
 
+    function it_will_return_a_response(RequestInterface $request)
+    {
+        $response = $this->sendRequest($request);
+        $response->shouldBeAnInstanceOf(ResponseInterface::class);
+        $response->getStatusCode()->shouldBe(200);
+    }
+
+    // TODO: Remove this in next major version
     function it_returns_a_promise_after_sending_the_request(RequestInterface $request)
     {
         $failed = false;
@@ -79,6 +96,15 @@ class CurlHttpClientSpec extends ObjectBehavior
         if ($failed) throw new FailureException($failed);
     }
 
+    function it_uses_curl(RequestInterface $request)
+    {
+        $this->sendRequest($request);
+        if (! is_resource(CurlState::$resource)) {
+            throw new FailureException("cURL was not initialized");
+        }
+    }
+
+    // TODO: Remove in next major version
     function it_uses_curl_to_send_http_requests(RequestInterface $request)
     {
         $this->send($request);
@@ -87,6 +113,18 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
+    function it_handles_authentication(RequestInterface $request)
+    {
+        $this->sendRequest($request);
+        if (
+            ! isset(CurlState::$options[CURLOPT_USERPWD]) ||
+            CurlState::$options[CURLOPT_USERPWD] != "john:secret"
+        ) {
+            throw new FailureException("Authentication was not set...");
+        }
+    }
+
+    // TODO: Remove this in next major version
     function it_can_set_the_http_authentication(RequestInterface $request)
     {
         $this->send($request);
@@ -99,6 +137,18 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
+    function it_constructs_the_url_for_curl_to_use(RequestInterface $request)
+    {
+        $this->sendRequest($request);
+        if (
+            ! isset(CurlState::$options[CURLOPT_URL]) ||
+            CurlState::$options[CURLOPT_URL] != 'https://example.com/some/path?foo=bar'
+        ) {
+            throw new FailureException("URL from constructor was not set...");
+        }
+    }
+
+    // TODO: Remove this in next major version
     function it_set_the_url_for_curl(RequestInterface $request)
     {
         $this->send($request);
@@ -110,6 +160,21 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
+    function it_can_infer_url_from_request(RequestInterface $request)
+    {
+        $uri = new Uri('http://example.org/some/path?foo=bar');
+        $request->getUri()->willReturn($uri);
+        $this->beConstructedWith();
+        $this->sendRequest($request);
+        if (
+            ! isset(CurlState::$options[CURLOPT_URL]) ||
+            CurlState::$options[CURLOPT_URL] != (string) $uri
+        ) {
+            throw new FailureException("URL was not set...");
+        }
+    }
+
+    // TODO: Remove this in next major version
     function it_can_infer_url_from_request_uri(RequestInterface $request)
     {
         $uri = new Uri('http://example.org/some/path?foo=bar');
@@ -125,6 +190,18 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
+    function it_sets_the_method_from_request(RequestInterface $request)
+    {
+        $this->sendRequest($request);
+        if (
+            ! isset(CurlState::$options[CURLOPT_CUSTOMREQUEST]) ||
+            CurlState::$options[CURLOPT_CUSTOMREQUEST] != 'PUT'
+        ) {
+            throw new FailureException("Request method was not set...");
+        }
+    }
+
+    // TODO: Remove this in next major version
     function it_sets_the_request_method_from_request(RequestInterface $request)
     {
         $this->send($request);
@@ -137,6 +214,19 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
+    function it_sets_the_headers_from_request(RequestInterface $request)
+    {
+        $expected = ['Content-Type: application/json; charset=utf-8'];
+        $this->sendRequest($request);
+        if (
+            ! isset(CurlState::$options[CURLOPT_HTTPHEADER]) ||
+            CurlState::$options[CURLOPT_HTTPHEADER] != $expected
+        ) {
+            throw new FailureException("Request headers were not set...");
+        }
+    }
+
+    // TODO: Remove this in next major version
     function it_sets_the_request_headers_from_request(RequestInterface $request)
     {
         $expected = ['Content-Type: application/json; charset=utf-8'];
@@ -150,6 +240,18 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
+    function it_sets_the_body_from_request(RequestInterface $request)
+    {
+        $this->sendRequest($request);
+        if (
+            ! isset(CurlState::$options[CURLOPT_POSTFIELDS]) ||
+            CurlState::$options[CURLOPT_POSTFIELDS] != 'Hello test!'
+        ) {
+            throw new FailureException("Request body was not set...");
+        }
+    }
+
+    // TODO: Remove this in next major version
     function it_sets_the_request_body_from_request(RequestInterface $request)
     {
         $this->send($request);
@@ -160,5 +262,21 @@ class CurlHttpClientSpec extends ObjectBehavior
         ) {
             throw new FailureException("Request body was not set...");
         }
+    }
+
+    function it_throws_a_network_exception_on_curl_error(RequestInterface $request)
+    {
+        CurlState::$error = CURLE_COULDNT_CONNECT;
+        $this->shouldThrow(NetworkExceptionInterface::class)
+            ->during('sendRequest', [$request]);
+        CurlState::$error = 0;
+    }
+
+    function it_throws_a_request_exception(RequestInterface $request)
+    {
+        CurlState::$error = CURLE_FAILED_INIT;
+        $this->shouldThrow(RequestExceptionInterface::class)
+            ->during('sendRequest', [$request]);
+        CurlState::$error = 0;
     }
 }

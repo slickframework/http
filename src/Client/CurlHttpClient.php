@@ -9,11 +9,15 @@
 
 namespace Slick\Http\Client;
 
+use Exception;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use React\Promise\Deferred;
 use React\Promise\PromiseInterface;
 use Slick\Http\Client\Exception\ClientErrorException;
+use Slick\Http\Client\Exception\NetworkException;
+use Slick\Http\Client\Exception\RequestException;
 use Slick\Http\Client\Exception\RuntimeException;
 use Slick\Http\Client\Exception\ServerErrorException;
 use Slick\Http\HttpClientInterface;
@@ -25,7 +29,7 @@ use Slick\Http\Message\Uri;
  *
  * @package Slick\Http\Client
 */
-final class CurlHttpClient implements HttpClientInterface
+final class CurlHttpClient implements ClientInterface, HttpClientInterface
 {
     /**
      * @var null|Uri
@@ -74,6 +78,7 @@ final class CurlHttpClient implements HttpClientInterface
      * @param RequestInterface $request
      *
      * @return PromiseInterface
+     * @deprecated please use CurlHttpClient::sendRequest() instead
      */
     public function send(RequestInterface $request)
     {
@@ -81,11 +86,37 @@ final class CurlHttpClient implements HttpClientInterface
         try {
             $response = $this->call($request);
             $deferred->resolve($response);
-        } catch (\Exception $caught) {
+        } catch (Exception $caught) {
             $deferred->reject($caught);
         }
 
         return $deferred->promise();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sendRequest(RequestInterface $request): ResponseInterface
+    {
+        $this->prepare($request);
+        $result = curl_exec($this->handler);
+        $errno = curl_errno($this->handler);
+
+        switch ($errno) {
+            case CURLE_OK:
+                // All OK, no actions needed.
+                break;
+            case CURLE_COULDNT_RESOLVE_PROXY:
+            case CURLE_COULDNT_RESOLVE_HOST:
+            case CURLE_COULDNT_CONNECT:
+            case CURLE_OPERATION_TIMEOUTED:
+            case CURLE_SSL_CONNECT_ERROR:
+                throw new NetworkException ($request, curl_error($this->handler));
+            default:
+                throw new RequestException($request, curl_error($this->handler));
+        }
+
+        return $this->createResponse($result);
     }
 
     /**
