@@ -20,7 +20,6 @@ use Slick\Http\Client\CurlHttpClient;
 use PhpSpec\ObjectBehavior;
 use Slick\Http\Client\CurlState;
 use Slick\Http\Client\HttpClientAuthentication;
-use Slick\Http\HttpClientInterface;
 use Slick\Http\Message\Stream\TextStream;
 use Slick\Http\Message\Uri;
 
@@ -51,12 +50,6 @@ class CurlHttpClientSpec extends ObjectBehavior
         );
     }
 
-    // TODO: Remove in next major version
-    function its_an_http_client()
-    {
-        $this->shouldBeAnInstanceOf(HttpClientInterface::class);
-    }
-
     function its_a_client_interface()
     {
         $this->shouldBeAnInstanceOf(ClientInterface::class);
@@ -74,40 +67,9 @@ class CurlHttpClientSpec extends ObjectBehavior
         $response->getStatusCode()->shouldBe(200);
     }
 
-    // TODO: Remove this in next major version
-    function it_returns_a_promise_after_sending_the_request(RequestInterface $request)
-    {
-        $failed = false;
-        $promise = $this->send($request);
-        $promise->shouldBeAnInstanceOf(Promise::class);
-        $promise->then(
-            function(ResponseInterface $response) use (&$failed) {
-                if ($response->getStatusCode() != 200) {
-                    $failed =
-                        'Expected a response status of 200, but got '.$response->getStatusCode()
-                    ;
-                }
-            },
-            function ($error) use (&$failed) {
-                $failed = "No error was expected, but got: $error";
-            }
-        );
-
-        if ($failed) throw new FailureException($failed);
-    }
-
     function it_uses_curl(RequestInterface $request)
     {
         $this->sendRequest($request);
-        if (! is_resource(CurlState::$resource)) {
-            throw new FailureException("cURL was not initialized");
-        }
-    }
-
-    // TODO: Remove in next major version
-    function it_uses_curl_to_send_http_requests(RequestInterface $request)
-    {
-        $this->send($request);
         if (! is_resource(CurlState::$resource)) {
             throw new FailureException("cURL was not initialized");
         }
@@ -124,34 +86,9 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    // TODO: Remove this in next major version
-    function it_can_set_the_http_authentication(RequestInterface $request)
-    {
-        $this->send($request);
-
-        if (
-            ! isset(CurlState::$options[CURLOPT_USERPWD]) ||
-            CurlState::$options[CURLOPT_USERPWD] != "john:secret"
-        ) {
-            throw new FailureException("Authentication was not set...");
-        }
-    }
-
     function it_constructs_the_url_for_curl_to_use(RequestInterface $request)
     {
         $this->sendRequest($request);
-        if (
-            ! isset(CurlState::$options[CURLOPT_URL]) ||
-            CurlState::$options[CURLOPT_URL] != 'https://example.com/some/path?foo=bar'
-        ) {
-            throw new FailureException("URL from constructor was not set...");
-        }
-    }
-
-    // TODO: Remove this in next major version
-    function it_set_the_url_for_curl(RequestInterface $request)
-    {
-        $this->send($request);
         if (
             ! isset(CurlState::$options[CURLOPT_URL]) ||
             CurlState::$options[CURLOPT_URL] != 'https://example.com/some/path?foo=bar'
@@ -174,38 +111,9 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    // TODO: Remove this in next major version
-    function it_can_infer_url_from_request_uri(RequestInterface $request)
-    {
-        $uri = new Uri('http://example.org/some/path?foo=bar');
-        $request->getUri()->willReturn($uri);
-        $this->beConstructedWith();
-        $this->send($request);
-
-        if (
-            ! isset(CurlState::$options[CURLOPT_URL]) ||
-            CurlState::$options[CURLOPT_URL] != (string) $uri
-        ) {
-            throw new FailureException("URL was not set...");
-        }
-    }
-
     function it_sets_the_method_from_request(RequestInterface $request)
     {
         $this->sendRequest($request);
-        if (
-            ! isset(CurlState::$options[CURLOPT_CUSTOMREQUEST]) ||
-            CurlState::$options[CURLOPT_CUSTOMREQUEST] != 'PUT'
-        ) {
-            throw new FailureException("Request method was not set...");
-        }
-    }
-
-    // TODO: Remove this in next major version
-    function it_sets_the_request_method_from_request(RequestInterface $request)
-    {
-        $this->send($request);
-
         if (
             ! isset(CurlState::$options[CURLOPT_CUSTOMREQUEST]) ||
             CurlState::$options[CURLOPT_CUSTOMREQUEST] != 'PUT'
@@ -226,36 +134,9 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    // TODO: Remove this in next major version
-    function it_sets_the_request_headers_from_request(RequestInterface $request)
-    {
-        $expected = ['Content-Type: application/json; charset=utf-8'];
-        $this->send($request);
-
-        if (
-            ! isset(CurlState::$options[CURLOPT_HTTPHEADER]) ||
-            CurlState::$options[CURLOPT_HTTPHEADER] != $expected
-        ) {
-            throw new FailureException("Request headers were not set...");
-        }
-    }
-
     function it_sets_the_body_from_request(RequestInterface $request)
     {
         $this->sendRequest($request);
-        if (
-            ! isset(CurlState::$options[CURLOPT_POSTFIELDS]) ||
-            CurlState::$options[CURLOPT_POSTFIELDS] != 'Hello test!'
-        ) {
-            throw new FailureException("Request body was not set...");
-        }
-    }
-
-    // TODO: Remove this in next major version
-    function it_sets_the_request_body_from_request(RequestInterface $request)
-    {
-        $this->send($request);
-
         if (
             ! isset(CurlState::$options[CURLOPT_POSTFIELDS]) ||
             CurlState::$options[CURLOPT_POSTFIELDS] != 'Hello test!'
