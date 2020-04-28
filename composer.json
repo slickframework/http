@@ -7,10 +7,12 @@
     "slick",
     "http",
     "request",
-    "PSR-7",
-    "PSR-15"
+    "client",
+    "psr-7",
+    "psr-15",
+    "psr-18"
   ],
-  "version": "v2.0.1",
+  "version": "v2.1.0",
   "minimum-stability": "dev",
   "authors": [
     {
@@ -38,8 +40,8 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "2.0-dev",
-      "dev-develop": "2.1-dev"
+      "dev-master": "2.1-dev",
+      "dev-develop": "2.2-dev"
     }
   },
   "scripts": {
@@ -53,6 +55,5 @@
     },
     "sort-packages": true,
     "optimize-autoloader": true
-
   }
 }
