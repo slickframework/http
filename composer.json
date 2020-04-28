@@ -25,9 +25,12 @@
     }
   },
   "require": {
-    "psr/http-server-middleware": "^1.0",
+    "php": ">=7.2",
+    "ext-curl": "*",
+    "psr/http-client": "^1.0@dev",
     "psr/http-message": "^1.0",
-    "react/promise": "^2.5"
+    "psr/http-server-middleware": "^1.0",
+    "react/promise": "^2.5",
   },
   "require-dev": {
     "phpspec/phpspec": "^3.4",

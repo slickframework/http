@@ -16,6 +16,7 @@ use React\Promise\PromiseInterface;
  * HTTP Client Interface
  *
  * @package Slick\Http
+ * @deprecated User the PSR-18 HTTP Client interface
  */
 interface HttpClientInterface
 {
@@ -26,6 +27,7 @@ interface HttpClientInterface
      * @param RequestInterface $request
      *
      * @return PromiseInterface
+     * @deprecated User the PSR-18 HTTP Client interface
      */
     public function send(RequestInterface $request);
 }
