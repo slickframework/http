@@ -153,13 +153,13 @@ echo $response->getBody();
 Working with HTTP requests (as a client) is one of the most common tasks nowadays. Almost every application
 need to retrieve data from a web service or API and therefore an HTTP client is a must have.
 
-``Slick\Http\Client\CurlHttpClient`` has a very simple interface:
+``Slick\Http\Client\CurlHttpClient`` implments [PSR-18 HTTP Client](https://www.php-fig.org/psr/psr-18/) 
 
 ``` php
-public function send(RequestInterface $request): PromiseInterface
+public function sendRequest(RequestInterface $request): ResponseInterface;
 ```
 
-It depends of ``React\Promise`` and PHP's ``cURL`` extension to connect and make HTTP requests.
+It depends on PHP's ``cURL`` extension to connect and make HTTP requests.
 Lets see an example:
 
 ``` php
@@ -171,12 +171,9 @@ use Slick\Http\Message\Uri;
 $request = new Request('GET', new Uri('https://example.com'));
 $client = new CurlHttpClient();
 
-$promise = $client->send($request);
+$response = $client->sendRequest($request);
 
-$promise->then(
-    function(ResponseInterface $response) { // handles the success response },
-    function($failureReason) { // handles the failed request },
-);
+$data = json_decode($response->getBody()->getContents());
 
 ```
 

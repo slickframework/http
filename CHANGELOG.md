@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [Unreleased]
 
+## [v2.1.0] - 2020-04-28
+### Added
+- [PSR-18 HTTP Client](https://www.php-fig.org/psr/psr-18/) support
+### Changed
+- ``Slick\Http\Client\CurlHttpClient`` to implement ``Psr\Http\Client\ClientInterface``
+### Deprecates
+- ``Slick\Http\HttpClientInterface`` interface  and ``CurlHttpClient::send()``method
+
 ## [v2.0.1] - 2020-03-07
 ### Fixes
 - Move uploaded file always throws Upload failure exception
@@ -55,7 +63,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/slickframework/http/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/slickframework/http/compare/v2.1.0...HEAD
+[v2.1.0]: https://github.com/slickframework/http/compare/v2.0.1...v2.1.0
+[v2.0.1]: https://github.com/slickframework/http/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/slickframework/http/compare/v1.2.3...v2.0.0
 [v1.2.3]: https://github.com/slickframework/http/compare/v1.2.2...v1.2.3
 [v1.2.2]: https://github.com/slickframework/http/compare/v1.2.1...v1.2.2
