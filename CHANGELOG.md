@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 [Unreleased]
+### Removed
+- ``Slick\Http\HttpClientInterface`` interface  and ``CurlHttpClient::send()``method
+- ``ClientErrorException``, ``HttpResponseException`` and ``ServerErrorException``
+-  ``react/promise`` as a dependency
 
 ## [v2.1.0] - 2020-04-28
 ### Added
