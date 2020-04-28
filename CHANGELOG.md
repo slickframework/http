@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [Unreleased]
 
+## [v3.0.0] - 2020-04-28
+### Removed
+- ``Slick\Http\HttpClientInterface`` interface  and ``CurlHttpClient::send()``method
+- ``ClientErrorException``, ``HttpResponseException`` and ``ServerErrorException``
+-  ``react/promise`` as a dependency
+
 ## [v2.1.0] - 2020-04-28
 ### Added
 - [PSR-18 HTTP Client](https://www.php-fig.org/psr/psr-18/) support
@@ -63,7 +69,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/slickframework/http/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/slickframework/http/compare/v3.0.0...HEAD
+[v3.0.0]: https://github.com/slickframework/http/compare/v2.1.0...v3.0.0
 [v2.1.0]: https://github.com/slickframework/http/compare/v2.0.1...v2.1.0
 [v2.0.1]: https://github.com/slickframework/http/compare/v2.0.0...v2.0.1
 [v2.0.0]: https://github.com/slickframework/http/compare/v1.2.3...v2.0.0

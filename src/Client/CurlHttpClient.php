@@ -9,18 +9,11 @@
 
 namespace Slick\Http\Client;
 
-use Exception;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use React\Promise\Deferred;
-use React\Promise\PromiseInterface;
-use Slick\Http\Client\Exception\ClientErrorException;
 use Slick\Http\Client\Exception\NetworkException;
 use Slick\Http\Client\Exception\RequestException;
-use Slick\Http\Client\Exception\RuntimeException;
-use Slick\Http\Client\Exception\ServerErrorException;
-use Slick\Http\HttpClientInterface;
 use Slick\Http\Message\Response;
 use Slick\Http\Message\Uri;
 
@@ -29,7 +22,7 @@ use Slick\Http\Message\Uri;
  *
  * @package Slick\Http\Client
 */
-final class CurlHttpClient implements ClientInterface, HttpClientInterface
+final class CurlHttpClient implements ClientInterface
 {
     /**
      * @var null|Uri
@@ -73,27 +66,6 @@ final class CurlHttpClient implements ClientInterface, HttpClientInterface
     }
 
     /**
-     * Send out an HTTP requests returning a promise
-     *
-     * @param RequestInterface $request
-     *
-     * @return PromiseInterface
-     * @deprecated please use CurlHttpClient::sendRequest() instead
-     */
-    public function send(RequestInterface $request)
-    {
-        $deferred = new Deferred();
-        try {
-            $response = $this->call($request);
-            $deferred->resolve($response);
-        } catch (Exception $caught) {
-            $deferred->reject($caught);
-        }
-
-        return $deferred->promise();
-    }
-
-    /**
      * @inheritDoc
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
@@ -111,43 +83,12 @@ final class CurlHttpClient implements ClientInterface, HttpClientInterface
             case CURLE_COULDNT_CONNECT:
             case CURLE_OPERATION_TIMEOUTED:
             case CURLE_SSL_CONNECT_ERROR:
-                throw new NetworkException ($request, curl_error($this->handler));
+                throw new NetworkException($request, curl_error($this->handler));
             default:
                 throw new RequestException($request, curl_error($this->handler));
         }
 
         return $this->createResponse($result);
-    }
-
-    /**
-     * Call the HTTP server returning the response
-     *
-     * @param RequestInterface $request
-     *
-     * @return Response
-     *
-     * @throws RuntimeException If any error occur while preparing and connecting to the server
-     * @throws ClientErrorException for responses with status codes between 400 and 499
-     * @throws ServerErrorException for responses with status codes grater or equal to 500
-     */
-    private function call(RequestInterface $request)
-    {
-        $this->prepare($request);
-        $result = curl_exec($this->handler);
-
-        if (curl_errno($this->handler) !== 0) {
-            throw new RuntimeException(
-                "Error connecting to server: ".curl_error($this->handler)
-            );
-        }
-
-        $response = $this->createResponse($result);
-
-        $this->checkClientError($response, $request);
-
-        $this->checkServerError($response, $request);
-
-        return $response;
     }
 
     /**
@@ -268,36 +209,6 @@ final class CurlHttpClient implements ClientInterface, HttpClientInterface
             $headers[trim($middle[0])] = trim($middle[1]);
         }
         return $headers;
-    }
-
-    /**
-     * Checks provided response is an HTTP client error (4xx)
-     *
-     * @param ResponseInterface $response
-     * @param RequestInterface $request
-     *
-     * @throws ClientErrorException for responses with status codes between 400 and 499
-     */
-    private function checkClientError(ResponseInterface $response, RequestInterface $request)
-    {
-        if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 500) {
-            throw new ClientErrorException($request, $response);
-        }
-    }
-
-    /**
-     * Checks provided response is an HTTP server error (5xx)
-     *
-     * @param ResponseInterface $response
-     * @param RequestInterface $request
-     *
-     * @throws ServerErrorException for responses with status codes grater or equal to 500
-     */
-    private function checkServerError(ResponseInterface $response, RequestInterface $request)
-    {
-        if ($response->getStatusCode() >= 500) {
-            throw new ServerErrorException($request, $response);
-        }
     }
 
     /**
