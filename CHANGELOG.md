@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [Unreleased]
 
+## [v3.0.2] - 2020-11-18
+### Adds
+- `provides` entry on composer file allowing other packages to be
+  aware of `psr/http-message-implementation`:1.0 implementation."
+
 ## [v3.0.0] - 2020-04-28
 ### Removed
 - ``Slick\Http\HttpClientInterface`` interface  and ``CurlHttpClient::send()``method
@@ -69,7 +74,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/slickframework/http/compare/v3.0.0...HEAD
+[Unreleased]: https://github.com/slickframework/http/compare/v3.0.2...HEAD
+[v3.0.2]: https://github.com/slickframework/http/compare/v3.0.0...v3.0.2
 [v3.0.0]: https://github.com/slickframework/http/compare/v2.1.0...v3.0.0
 [v2.1.0]: https://github.com/slickframework/http/compare/v2.0.1...v2.1.0
 [v2.0.1]: https://github.com/slickframework/http/compare/v2.0.0...v2.0.1

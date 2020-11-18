@@ -12,7 +12,7 @@
     "psr-15",
     "psr-18"
   ],
-  "version": "v3.0.0",
+  "version": "v3.0.2",
   "minimum-stability": "dev",
   "authors": [
     {
@@ -36,6 +36,9 @@
   "require-dev": {
     "phpspec/phpspec": "^3.4",
     "squizlabs/php_codesniffer": "^3.0@dev"
+  },
+  "provide": {
+    "psr/http-message-implementation": "1.0"
   },
   "extra": {
     "branch-alias": {
