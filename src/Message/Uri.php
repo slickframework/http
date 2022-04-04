@@ -307,8 +307,8 @@ class Uri implements UriInterface
             ? "//{$this->getAuthority()}"
             : '';
         $text .= '/'. ltrim($this->getPath(), '/');
-        $text .= strlen($this->query) > 0 ? "?{$this->query}" : '';
-        $text .= strlen($this->fragment) > 0 ? "#{$this->fragment}" : '';
+        $text .= !is_null($this->query)  && strlen($this->query) > 0 ? "?{$this->query}" : '';
+        $text .= !is_null($this->fragment) && strlen($this->fragment) > 0 ? "#{$this->fragment}" : '';
         return $text;
     }
 
