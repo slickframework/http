@@ -40,6 +40,6 @@ class JsonParserSpec extends ObjectBehavior
 
     function it_parses_the_a_json_serialized_body()
     {
-        $this->parse()->shouldBeObject();
+        $this->parse()->shouldBeAnInstanceOf(\stdClass::class);
     }
 }

@@ -34,6 +34,6 @@ class BodyParserSpec extends ObjectBehavior
     function it_parses_a_given_body_stream()
     {
         $stream = new TextStream(json_encode(['foo' => 'bar']));
-        $this->parse($stream)->shouldBeObject();
+        $this->parse($stream)->shouldBeAnInstanceOf(\stdClass::class);
     }
 }

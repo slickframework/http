@@ -28,6 +28,7 @@
   },
   "require": {
     "php": ">=7.3",
+    "ext-json": "*",
     "ext-curl": "*",
     "psr/http-client": "^1.0@dev",
     "psr/http-message": "^1.0",

@@ -41,6 +41,9 @@ class JsonParser implements BodyParserInterface
     public function parse()
     {
         $this->stream->rewind();
-        return json_decode($this->stream->getContents());
+        $string = $this->stream->getContents();
+        $json_decode = json_decode($string, false);
+
+        return (object) $json_decode;
     }
 }
