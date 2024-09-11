@@ -2,13 +2,16 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
-[![Build Status][ico-travis]][link-travis]
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-`Slick/Http` is an useful library for HTTP foundation. It implements the PSR-7 message
-interface and has simple middleware dispatcher based on the PSR-15 middleware interfaces proposal
-that can help you dealing with HTTP requests and use other middleware packages to compose it.
+
+`slick/http` provides a complete implementation of PSR-7 (HTTP Message Interface) and PSR-18 (HTTP Client Interface), enabling developers to
+work seamlessly with HTTP messages and clients in a standardized way. By adhering to these PSR standards, the library ensures interoperability
+with other libraries and frameworks that follow the same specifications, promoting code reusability and consistency across projects. In
+addition, the library includes an HTTP server that functions as a middleware runner, allowing you to pass a collection of middleware objects
+to the server, which are called in sequence to compose a response for the current server request. This middleware approach provides a flexible,
+modular way to handle HTTP requests, enhancing the scalability and maintainability of your PHP applications.
 
 This package is compliant with PSR-2 code standards and PSR-4 autoload standards. It
 also applies the [semantic version 2.0.0](http://semver.org) specification.
@@ -207,7 +210,7 @@ handler to save in a database by simply implementing the `Slick\Http\Session\Ses
 It also comes with a `Slick\Http\Session\Driver\AbstractDriver` class that has all the basic
 operations of the interface already implemented.
 
-Please check [documentation site](http://http.slick-framework.com) for a complete reference. 
+Please check [documentation site](https://http.slick-framework.com) for a complete reference. 
 
 ## Change log
 
