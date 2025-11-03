@@ -28,43 +28,47 @@ class Request extends HttpRequest implements ServerRequestInterface
     /**
      * @var array
      */
-    private $server;
+    private array $server = [];
 
     /**
      * @var array
      */
-    private $cookies;
+    private array $cookies = [];
 
     /**
      * @var array
      */
-    private $queryParams;
+    private array $queryParams = [];
 
     /**
-     * @var UploadedFile[]
+     * @var null|UploadedFile[]
      */
-    private $uploadedFiles;
+    private ?array $uploadedFiles = null;
 
     /**
      * @var mixed
      */
-    private $parsedBody;
+    private mixed $parsedBody = '';
 
     /**
      * @var array
      */
-    private $attributes = [];
+    private array $attributes = [];
 
     /**
      * Creates an HTTP Server Request Message
      *
-     * @param string                   $method
+     * @param string|null              $method
+     * @param string|UriInterface|null $target
      * @param string|StreamInterface   $body
-     * @param null|string|UriInterface $target
      * @param array                    $headers
      */
-    public function __construct($method = null, $target = null, $body = null, array $headers = [])
-    {
+    public function __construct(
+        string $method = null,
+        UriInterface|string $target = null,
+        $body = null,
+        array $headers = []
+    ) {
         $method = null === $method
             ? $this->getServerParams()['REQUEST_METHOD']
             : $method;
@@ -87,7 +91,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * @return array
      */
-    public function getServerParams()
+    public function getServerParams(): array
     {
         if (! $this->server) {
             $this->server = $_SERVER;
@@ -102,7 +106,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * @return array
      */
-    public function getCookieParams()
+    public function getCookieParams(): array
     {
         if (! $this->cookies) {
             $this->cookies = $_COOKIE;
@@ -116,7 +120,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      * @param array $cookies Array of key/value pairs representing cookies.
      * @return Request
      */
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): ServerRequestInterface
     {
         $request = clone $this;
         $request->cookies = $cookies;
@@ -130,7 +134,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * @return array
      */
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
         if (! $this->queryParams) {
             $this->queryParams = $this->detectQueryParams();
@@ -146,7 +150,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * @return Request
      */
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): ServerRequestInterface
     {
         $request = clone $this;
         $request->queryParams = $query;
@@ -158,7 +162,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * @return UploadedFile[]
      */
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         if (null === $this->uploadedFiles) {
             $this->uploadedFiles = UploadedFilesFactory::createFiles();
@@ -174,7 +178,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * @throws InvalidArgumentException if an invalid structure is provided.
      */
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         if (! $this->checkUploadedFiles($uploadedFiles)) {
             throw new InvalidArgumentException(
@@ -194,9 +198,9 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * @return array
      */
-    private function detectQueryParams()
+    private function detectQueryParams(): array
     {
-        $uri = new Uri('http://example.org'.$this->getRequestTarget());
+        $uri = new Uri('https://example.org' .$this->getRequestTarget());
         parse_str($uri->getQuery(), $params);
         return array_merge($_GET, $params);
     }
@@ -204,12 +208,11 @@ class Request extends HttpRequest implements ServerRequestInterface
     /**
      * Creates a stream from php input stream
      *
-     * @return StreamInterface
+     * @return TextStream|StreamInterface
      */
-    private function getPhpInputStream()
+    private function getPhpInputStream(): TextStream|StreamInterface
     {
-        $stream = new TextStream(file_get_contents('php://input'));
-        return $stream;
+        return new TextStream(file_get_contents('php://input'));
     }
 
     /**
@@ -219,7 +222,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * @return bool
      */
-    private function checkUploadedFiles(array $files)
+    private function checkUploadedFiles(array $files): bool
     {
         $valid = true;
 
@@ -241,7 +244,7 @@ class Request extends HttpRequest implements ServerRequestInterface
     /**
      * Loads the headers form request
      */
-    private function loadHeaders()
+    private function loadHeaders(): void
     {
         foreach ($_SERVER as $key => $value) {
             $subset = substr($key, 0, 5);
@@ -265,7 +268,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      * @return null|array|object The deserialized body parameters, if any.
      *     These will typically be an array or object.
      */
-    public function getParsedBody()
+    public function getParsedBody(): object|array|null
     {
         if (! $this->parsedBody) {
             $parser = new BodyParser($this->getHeaderLine('Content-Type'));
@@ -284,7 +287,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      * @throws InvalidArgumentException if an unsupported argument type is
      *     provided.
      */
-    public function withParsedBody($data)
+    public function withParsedBody($data): ServerRequestInterface
     {
         if (! is_null($data) &&
             ! is_array($data) &&
@@ -308,11 +311,11 @@ class Request extends HttpRequest implements ServerRequestInterface
      * parameters derived from the request: e.g., the results of path
      * match operations; the results of decrypting cookies; the results of
      * deserializing non-form-encoded message bodies; etc. Attributes
-     * will be application and request specific, and CAN be mutable.
+     * will be application- and request-specific, and CAN be mutable.
      *
-     * @return mixed[] Attributes derived from the request.
+     * @return array Attributes derived from the request.
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -323,13 +326,13 @@ class Request extends HttpRequest implements ServerRequestInterface
      * This method allows setting a single derived request attribute as
      * described in getAttributes().
      *
-     * @see getAttributes()
      * @param string $name The attribute name.
-     * @param mixed $value The value of the attribute.
+          * @param mixed $value The value of the attribute.
      *
      * @return Request
+     *@see getAttributes()
      */
-    public function withAttribute($name, $value)
+    public function withAttribute(string $name, $value): ServerRequestInterface
     {
         $request = clone $this;
         $request->attributes[$name] = $value;
@@ -348,7 +351,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      * @param mixed $default Default value to return if the attribute does not exist.
      * @return mixed
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute($name, $default = null): mixed
     {
         if (array_key_exists($name, $this->attributes)) {
             $default = $this->attributes[$name];
@@ -362,12 +365,12 @@ class Request extends HttpRequest implements ServerRequestInterface
      * This method allows removing a single derived request attribute as
      * described in getAttributes().
      *
-     * @see getAttributes()
      * @param string $name The attribute name.
-     *
+          *
      * @return Request
+     *@see getAttributes()
      */
-    public function withoutAttribute($name)
+    public function withoutAttribute(string $name): ServerRequestInterface
     {
         $request = clone $this;
         if (array_key_exists($name, $request->attributes)) {
