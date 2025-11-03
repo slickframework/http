@@ -85,12 +85,15 @@ class TextStreamSpec extends ObjectBehavior
 
     function it_can_seek_a_position_in_the_stream()
     {
-        $this->seek(10)->shouldBe(true);
+
+        $this->seek(10);
+        $this->read(2)->shouldBe('d!');
     }
 
     function it_can_be_rewind()
     {
-        $this->rewind()->shouldBe(true);
+        $this->rewind();
+        $this->read(2)->shouldBe('he');
     }
 
     function it_can_be_writable()

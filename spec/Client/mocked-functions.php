@@ -10,7 +10,7 @@ namespace Slick\Http\Client;
 
 abstract class CurlState
 {
-    public static $resource;
+    public static $resource = false;
     public static $options = [];
     public static $error = 0;
 

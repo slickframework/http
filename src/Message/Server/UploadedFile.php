@@ -23,39 +23,39 @@ use Slick\Http\Message\Stream\FileStream;
 final class UploadedFile implements UploadedFileInterface
 {
     /**
-     * @var StreamInterface
+     * @var StreamInterface|null
      */
-    private $stream;
+    private ?StreamInterface $stream = null;
 
     /**
      * @var int
      */
-    private $size;
+    private int $size;
 
     /**
      * @var int
      */
-    private $error;
+    private int $error;
 
     /**
      * @var string
      */
-    private $clientName;
+    private string $clientName;
 
     /**
      * @var string
      */
-    private $mediaType;
+    private string $mediaType;
 
     /**
      * @var string
      */
-    private $tmpFile;
+    private string $tmpFile;
 
     /**
      * @var bool
      */
-    private $moved = false;
+    private bool $moved = false;
 
     /**
      * Creates an UploadedFile
@@ -74,7 +74,7 @@ final class UploadedFile implements UploadedFileInterface
      *
      * @return UploadedFile
      */
-    public static function create(array $fileUploadData)
+    public static function create(array $fileUploadData): UploadedFile
     {
         $uploadedFile = new UploadedFile(new FileStream($fileUploadData['tmp_name']));
         $uploadedFile->size = $fileUploadData['size'];
@@ -93,7 +93,7 @@ final class UploadedFile implements UploadedFileInterface
      *
      * @throws RuntimeException in cases when no stream is available
      */
-    public function getStream()
+    public function getStream(): StreamInterface
     {
         if (!$this->stream) {
             throw new RuntimeException(
@@ -108,7 +108,7 @@ final class UploadedFile implements UploadedFileInterface
      *
      * @return int|null The file size in bytes or null if unknown.
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return $this->size;
     }
@@ -123,7 +123,7 @@ final class UploadedFile implements UploadedFileInterface
      *
      * @return int One of PHP's UPLOAD_ERR_XXX constants.
      */
-    public function getError()
+    public function getError(): int
     {
         return $this->error;
     }
@@ -138,7 +138,7 @@ final class UploadedFile implements UploadedFileInterface
      * @return string|null The filename sent by the client or null if none
      *     was provided.
      */
-    public function getClientFilename()
+    public function getClientFilename(): ?string
     {
         return $this->clientName;
     }
@@ -153,7 +153,7 @@ final class UploadedFile implements UploadedFileInterface
      * @return string|null The media type sent by the client or null if none
      *     was provided.
      */
-    public function getClientMediaType()
+    public function getClientMediaType(): ?string
     {
         return $this->mediaType;
     }
@@ -179,7 +179,7 @@ final class UploadedFile implements UploadedFileInterface
      * @throws RuntimeException on any error during the move operation, or on
      *     the second or subsequent call to the method.
      */
-    public function moveTo($targetPath)
+    public function moveTo(string $targetPath): void
     {
         $this->checkMoved();
         $this->checkTargetDirExists($targetPath);
@@ -188,7 +188,7 @@ final class UploadedFile implements UploadedFileInterface
         $exception = null;
         set_error_handler(function ($number, $error) use (&$exception) {
             $exception = new RuntimeException(
-                "Cannot move uploaded file: ($number) {$error}"
+                "Cannot move uploaded file: ($number) $error"
             );
         });
 
@@ -204,9 +204,9 @@ final class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * Check if current file is already moved
+     * Check if the current file is already moved
      */
-    private function checkMoved()
+    private function checkMoved(): void
     {
         if ($this->moved) {
             throw new RuntimeException(
@@ -220,7 +220,7 @@ final class UploadedFile implements UploadedFileInterface
      *
      * @param $targetPath
      */
-    private function checkTargetDirExists($targetPath)
+    private function checkTargetDirExists($targetPath): void
     {
         if (!is_dir(dirname($targetPath))) {
             throw new InvalidArgumentException(
@@ -232,7 +232,7 @@ final class UploadedFile implements UploadedFileInterface
     /**
      * Checks if upload was successful
      */
-    private function checkUpload()
+    private function checkUpload(): void
     {
         if (!is_uploaded_file($this->tmpFile)) {
             throw new RuntimeException(

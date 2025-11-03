@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [Unreleased]
 
+## [v4.0.0] - 2025-11-03
+### Added
+- PHP 8 support
+### Fixes
+- `CurlHttpClient::__construct()` implicitly marking parameter $url as nullable on constructor deprecation
+### Removed
+- PHP < 8.2.0 support
+
 ## [v3.0.3] - 2022-04-04
 ### Fixes
 - `strlen()` deprecation warning on `Uri` implementation
@@ -78,7 +86,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/slickframework/http/compare/v3.0.3...HEAD
+[Unreleased]: https://github.com/slickframework/http/compare/v4.0.0...HEAD
+[v4.0.0]: https://github.com/slickframework/http/compare/v3.0.3...v4.0.0
 [v3.0.3]: https://github.com/slickframework/http/compare/v3.0.2...v3.0.3
 [v3.0.2]: https://github.com/slickframework/http/compare/v3.0.0...v3.0.2
 [v3.0.0]: https://github.com/slickframework/http/compare/v2.1.0...v3.0.0

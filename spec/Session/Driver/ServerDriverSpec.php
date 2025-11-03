@@ -76,7 +76,7 @@ class ServerDriverSpec extends ObjectBehavior
         $this->get('foo', false)->shouldBe(false);
     }
 
-    public function getMatchers()
+    public function getMatchers(): array
     {
         return [
             'haveBeenSet' => function () {
