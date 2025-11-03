@@ -9,6 +9,7 @@
 
 namespace Slick\Http\Message;
 
+use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 use Slick\Http\Message\Stream\TextStream;
@@ -24,24 +25,24 @@ class Message implements MessageInterface
     /**
      * @var string
      */
-    private $protocolVersion = '1.1';
+    private string $protocolVersion = '1.1';
 
     /**
      * @var array
      */
-    protected $headers = [];
+    protected array $headers = [];
 
     /**
      * @var StreamInterface
      */
-    protected $body;
+    protected StreamInterface $body;
 
     /**
      * Creates an HTTP Message
      *
      * @param string $body
      */
-    public function __construct($body = '')
+    public function __construct(string $body = '')
     {
         $body = $body instanceof StreamInterface
             ? $body
@@ -56,7 +57,7 @@ class Message implements MessageInterface
      *
      * @return string HTTP protocol version.
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->protocolVersion;
     }
@@ -74,7 +75,7 @@ class Message implements MessageInterface
      * @param string $version HTTP protocol version
      * @return static
      */
-    public function withProtocolVersion($version)
+    public function withProtocolVersion(string $version): MessageInterface
     {
         $message = clone $this;
         $message->protocolVersion = $version;
@@ -106,7 +107,7 @@ class Message implements MessageInterface
      *     key MUST be a header name, and each value MUST be an array of strings
      *     for that header.
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -119,7 +120,7 @@ class Message implements MessageInterface
      *     name using a case-insensitive string comparison. Returns false if
      *     no matching header name is found in the message.
      */
-    public function hasHeader($name)
+    public function hasHeader(string $name): bool
     {
         $key = $this->headerKey($name);
         return array_key_exists($key, $this->headers);
@@ -139,7 +140,7 @@ class Message implements MessageInterface
      *    header. If the header does not appear in the message, this method MUST
      *    return an empty array.
      */
-    public function getHeader($name)
+    public function getHeader(string $name): array
     {
         $key = $this->headerKey($name);
         if (array_key_exists($key, $this->headers)) {
@@ -168,7 +169,7 @@ class Message implements MessageInterface
      *    concatenated together using a comma. If the header does not appear in
      *    the message, this method MUST return an empty string.
      */
-    public function getHeaderLine($name)
+    public function getHeaderLine(string $name): string
     {
         $header = $this->getHeader($name);
         return empty($header)
@@ -189,9 +190,9 @@ class Message implements MessageInterface
      * @param string $name Case-insensitive header field name.
      * @param string|string[] $value Header value(s).
      * @return static
-     * @throws \InvalidArgumentException for invalid header names or values.
+     * @throws InvalidArgumentException for invalid header names or values.
      */
-    public function withHeader($name, $value)
+    public function withHeader(string $name, $value): MessageInterface
     {
         $key = $this->headerKey($name);
 
@@ -214,9 +215,9 @@ class Message implements MessageInterface
      * @param string $name Case-insensitive header field name to add.
      * @param string|string[] $value Header value(s).
      * @return static
-     * @throws \InvalidArgumentException for invalid header names or values.
+     * @throws InvalidArgumentException for invalid header names or values.
      */
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader(string $name, $value): MessageInterface
     {
         $header = $this->getHeader($name);
         $values = is_array($value) ? $value : [$value];
@@ -238,7 +239,7 @@ class Message implements MessageInterface
      * @param string $name Case-insensitive header field name to remove.
      * @return static
      */
-    public function withoutHeader($name)
+    public function withoutHeader(string $name): MessageInterface
     {
         $message = clone $this;
         $key = $this->headerKey($name);
@@ -255,7 +256,7 @@ class Message implements MessageInterface
      *
      * @return StreamInterface Returns the body as a stream.
      */
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->body;
     }
@@ -271,9 +272,9 @@ class Message implements MessageInterface
      *
      * @param StreamInterface $body Body.
      * @return static
-     * @throws \InvalidArgumentException When the body is not valid.
+     * @throws InvalidArgumentException When the body is not valid.
      */
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): MessageInterface
     {
         $message = clone $this;
         $message->body = $body;
@@ -283,10 +284,10 @@ class Message implements MessageInterface
     /**
      * Get the original (preserved) header name for provided name
      *
-     * @param $name
-     * @return mixed
+     * @param string $name
+     * @return string
      */
-    protected function headerKey($name)
+    protected function headerKey(string $name): string
     {
         $key = $name;
         foreach (array_keys($this->headers) as $existingName) {

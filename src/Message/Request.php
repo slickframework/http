@@ -10,7 +10,6 @@
 namespace Slick\Http\Message;
 
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Slick\Http\Message\Exception\InvalidArgumentException;
 
@@ -24,28 +23,32 @@ class Request extends Message implements RequestInterface
     /**
      * @var string
      */
-    protected $method;
+    protected string $method;
 
     /**
-     * @var string
+     * @var null|string
      */
-    protected $target;
+    protected ?string $target = null;
 
     /**
-     * @var UriInterface
+     * @var null|UriInterface
      */
-    private $uri;
+    private ?UriInterface $uri = null;
 
     /**
      * Creates an HTTP Request message
      *
-     * @param string                   $method
-     * @param string|StreamInterface   $body
-     * @param null|string|UriInterface $target
-     * @param array                    $headers
+     * @param string $method
+     * @param string|UriInterface|null $target
+     * @param string $body
+     * @param array $headers
      */
-    public function __construct($method, $target = null, $body = '', array $headers = [])
-    {
+    public function __construct(
+        string $method,
+        UriInterface|string|null $target = null,
+        string $body = '',
+        array $headers = []
+    ) {
         parent::__construct($body);
         $this->method = $method;
 
@@ -66,13 +69,13 @@ class Request extends Message implements RequestInterface
      *
      * @return string
      */
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         if (! $this->target && ! $this->uri) {
             return '/';
         }
 
-        return $this->target ? $this->target : $this->getTargetFromUri();
+        return $this->target ?: $this->getTargetFromUri();
     }
 
     /**
@@ -83,7 +86,7 @@ class Request extends Message implements RequestInterface
      * @param mixed $requestTarget
      * @return static
      */
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget($requestTarget): RequestInterface
     {
         $message = clone $this;
         $message->target = $requestTarget;
@@ -95,7 +98,7 @@ class Request extends Message implements RequestInterface
      *
      * @return string Returns the request method.
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
@@ -107,7 +110,7 @@ class Request extends Message implements RequestInterface
      * @return static
      * @throws InvalidArgumentException for invalid HTTP methods.
      */
-    public function withMethod($method)
+    public function withMethod(string $method): RequestInterface
     {
         $method = strtoupper($method);
         $knownMethods = [
@@ -133,7 +136,7 @@ class Request extends Message implements RequestInterface
      * @return UriInterface Returns a UriInterface instance
      *     representing the URI of the request.
      */
-    public function getUri()
+    public function getUri(): UriInterface
     {
         return $this->uri;
     }
@@ -146,7 +149,7 @@ class Request extends Message implements RequestInterface
      * @param bool $preserveHost Preserve the original state of the Host header.
      * @return static
      */
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
     {
         $message = clone $this;
         $message->setUri($uri, $preserveHost);
@@ -159,7 +162,7 @@ class Request extends Message implements RequestInterface
      * @param UriInterface $uri
      * @param bool $preserveHost
      */
-    protected function setUri(UriInterface $uri, $preserveHost = false)
+    protected function setUri(UriInterface $uri, bool $preserveHost = false): string
     {
         if (! $preserveHost && $uri->getHost() !== '') {
             $key = $this->headerKey('Host');
@@ -167,6 +170,7 @@ class Request extends Message implements RequestInterface
         }
 
         $this->uri = $uri;
+        return $this->getTargetFromUri();
     }
 
     /**
@@ -174,7 +178,7 @@ class Request extends Message implements RequestInterface
      *
      * @return string
      */
-    private function getTargetFromUri()
+    private function getTargetFromUri(): string
     {
         $target  = "/{$this->uri->getPath()}";
         $target .= $this->uri->getQuery() !== ''

@@ -9,6 +9,7 @@
 
 namespace Slick\Http\Client;
 
+use CurlHandle;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -27,25 +28,25 @@ final class CurlHttpClient implements ClientInterface
     /**
      * @var null|Uri
      */
-    private $url;
+    private ?Uri $url = null;
 
     /**
      * @var null|HttpClientAuthentication
      */
-    private $auth;
+    private ?HttpClientAuthentication $auth = null;
 
     /**
      * @var array
      */
-    private $options = [
+    private array $options = [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HEADER => true
     ];
 
     /**
-     * @var resource
+     * @var null|CurlHandle
      */
-    private $handler;
+    private ?CurlHandle $handler = null;
 
     /**
      * Creates a CURL HTTP Client
@@ -54,8 +55,11 @@ final class CurlHttpClient implements ClientInterface
      * @param HttpClientAuthentication|null $auth
      * @param array                         $options
      */
-    public function __construct(Uri $url = null, HttpClientAuthentication $auth = null, array $options = [])
-    {
+    public function __construct(
+        ?Uri $url = null,
+        ?HttpClientAuthentication $auth = null,
+        array $options = []
+    ) {
         $this->handler = curl_init();
         $this->url = $url;
         $this->auth = $auth;
@@ -96,9 +100,11 @@ final class CurlHttpClient implements ClientInterface
      *
      * @param RequestInterface $request
      */
-    private function prepare(RequestInterface $request)
+    private function prepare(RequestInterface $request): void
     {
-        $this->reset($this->handler);
+        if (is_resource($this->handler)) {
+            $this->reset($this->handler);
+        }
         $this->setUrl($request);
         $this->options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
         $this->setHeaders($request);
@@ -117,7 +123,7 @@ final class CurlHttpClient implements ClientInterface
      *
      * @param RequestInterface $request
      */
-    private function setUrl(RequestInterface $request)
+    private function setUrl(RequestInterface $request): void
     {
         $target = $request->getRequestTarget();
         $parts = parse_url($target);
@@ -139,11 +145,11 @@ final class CurlHttpClient implements ClientInterface
      *
      * @param RequestInterface $request
      */
-    private function setHeaders(RequestInterface $request)
+    private function setHeaders(RequestInterface $request): void
     {
         $headers = [];
         foreach ($request->getHeaders() as $header => $values) {
-            $headers[] = "{$header}: ".implode('; ', $values);
+            $headers[] = "$header: ".implode('; ', $values);
         }
         $this->options[CURLOPT_HTTPHEADER] = $headers;
     }
@@ -153,7 +159,7 @@ final class CurlHttpClient implements ClientInterface
      *
      * @param resource $ch
      */
-    private function reset(&$ch)
+    private function reset(&$ch): void
     {
         $ch = curl_init();
     }
@@ -165,7 +171,7 @@ final class CurlHttpClient implements ClientInterface
      *
      * @return Response
      */
-    private function createResponse($result)
+    private function createResponse(string $result): Response
     {
         $status = curl_getinfo($this->handler, CURLINFO_HTTP_CODE);
         list($header, $body) = $this->splitHeaderFromBody($result);
@@ -179,7 +185,7 @@ final class CurlHttpClient implements ClientInterface
      *
      * @return array
      */
-    private function splitHeaderFromBody($result)
+    private function splitHeaderFromBody($result): array
     {
         $header_size = curl_getinfo($this->handler, CURLINFO_HEADER_SIZE);
 
@@ -196,12 +202,12 @@ final class CurlHttpClient implements ClientInterface
      *
      * @return array
      */
-    private function parseHeaders($header)
+    private function parseHeaders(string $header): array
     {
         $lines = explode("\n", $header);
         $headers = [];
         foreach ($lines as $line) {
-            if (strpos($line, ':') === false) {
+            if (!str_contains($line, ':')) {
                 continue;
             }
 

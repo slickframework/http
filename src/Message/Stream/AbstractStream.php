@@ -20,9 +20,9 @@ abstract class AbstractStream implements StreamInterface
 {
 
     /**
-     * @var resource
+     * @var null|resource
      */
-    protected $stream;
+    protected mixed $stream = null;
 
     /**
      * Reads all data from the stream into a string, from the beginning to end.
@@ -38,7 +38,7 @@ abstract class AbstractStream implements StreamInterface
      * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (!$this->isReadable()) {
             return '';
@@ -47,9 +47,9 @@ abstract class AbstractStream implements StreamInterface
         try {
             $this->rewind();
             $value = $this->getContents();
-        } catch (\RuntimeException $e) {
+        } catch (\RuntimeException) {
         }
-        return $value;
+        return (string) $value;
     }
 
     /**
@@ -57,7 +57,7 @@ abstract class AbstractStream implements StreamInterface
      *
      * @return void
      */
-    public function close()
+    public function close(): void
     {
         if (is_resource($this->stream)) {
             fclose($this->stream);
@@ -71,7 +71,7 @@ abstract class AbstractStream implements StreamInterface
      *
      * @return resource|null Underlying PHP stream, if any
      */
-    public function detach()
+    public function detach(): mixed
     {
         $resource = $this->stream;
         $this->stream = null;
@@ -83,7 +83,7 @@ abstract class AbstractStream implements StreamInterface
      *
      * @return int|null Returns the size in bytes if known, or null if unknown.
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         if (is_null($this->stream)) {
             return null;
@@ -99,7 +99,7 @@ abstract class AbstractStream implements StreamInterface
      * @return int Position of the file pointer
      * @throws RuntimeException on error.
      */
-    public function tell()
+    public function tell(): int
     {
         if (!$this->stream) {
             throw new RuntimeException(
@@ -120,7 +120,7 @@ abstract class AbstractStream implements StreamInterface
      *
      * @return bool
      */
-    public function eof()
+    public function eof(): bool
     {
         $return = true;
         if (is_resource($this->stream)) {
@@ -130,11 +130,11 @@ abstract class AbstractStream implements StreamInterface
     }
 
     /**
-     * Returns whether or not the stream is seekable.
+     * Returns whether the stream is seekable.
      *
      * @return bool
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         $seekable = false;
         if ($this->stream) {
@@ -156,9 +156,9 @@ abstract class AbstractStream implements StreamInterface
      *     SEEK_END: Set position to end-of-stream plus offset.
      * @throws RuntimeException on failure.
      *
-     * @return bool
+     * @return void
      */
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek(int $offset, int $whence = SEEK_SET): void
     {
         if (! $this->stream) {
             throw new RuntimeException('No resource available; cannot seek position');
@@ -170,7 +170,6 @@ abstract class AbstractStream implements StreamInterface
         if (0 !== $result) {
             throw new RuntimeException('Error seeking within stream');
         }
-        return true;
     }
 
     /**
@@ -183,17 +182,17 @@ abstract class AbstractStream implements StreamInterface
      * @link http://www.php.net/manual/en/function.fseek.php
      * @throws \RuntimeException on failure.
      */
-    public function rewind()
+    public function rewind(): void
     {
-        return $this->seek(0);
+        $this->seek(0);
     }
 
     /**
-     * Returns whether or not the stream is writable.
+     * Returns whether the stream is writable.
      *
      * @return bool
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         if (! $this->stream) {
             return false;
@@ -216,7 +215,7 @@ abstract class AbstractStream implements StreamInterface
      * @return int Returns the number of bytes written to the stream.
      * @throws RuntimeException on failure.
      */
-    public function write($string)
+    public function write(string $string): int
     {
         if (! $this->stream) {
             throw new RuntimeException('No resource available; cannot write');
@@ -232,11 +231,11 @@ abstract class AbstractStream implements StreamInterface
     }
 
     /**
-     * Returns whether or not the stream is readable.
+     * Returns whether the stream is readable.
      *
      * @return bool
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         if (! $this->stream) {
             return false;
@@ -256,7 +255,7 @@ abstract class AbstractStream implements StreamInterface
      *     if no bytes are available.
      * @throws RuntimeException if an error occurs.
      */
-    public function read($length)
+    public function read(int $length): string
     {
         if (! $this->stream) {
             throw new RuntimeException('No resource available; cannot read');
@@ -278,7 +277,7 @@ abstract class AbstractStream implements StreamInterface
      * @throws RuntimeException if unable to read or an error occurs while
      *     reading.
      */
-    public function getContents()
+    public function getContents(): string
     {
         if (! $this->isReadable()) {
             throw new RuntimeException('Stream is not readable');
@@ -302,7 +301,7 @@ abstract class AbstractStream implements StreamInterface
      *     provided. Returns a specific key value if a key is provided and the
      *     value is found, or null if the key is not found.
      */
-    public function getMetadata($key = null)
+    public function getMetadata($key = null): mixed
     {
         if (null === $key) {
             return stream_get_meta_data($this->stream);
@@ -315,7 +314,7 @@ abstract class AbstractStream implements StreamInterface
     }
 
     /**
-     * Closes the stream on destroy
+     * Closes the stream on destruction
      */
     public function __destruct()
     {

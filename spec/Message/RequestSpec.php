@@ -30,6 +30,7 @@ class RequestSpec extends ObjectBehavior
     function let(StreamInterface $body)
     {
         $this->uri = new Uri('http://example.com/path?foo=bar');
+        $body->__toString()->willReturn('Hello world!');
         $this->beConstructedWith('POST', $this->uri, $body, $this->headers);
     }
 

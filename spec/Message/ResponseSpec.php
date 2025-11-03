@@ -23,6 +23,7 @@ class ResponseSpec extends ObjectBehavior
 {
     function let(StreamInterface $body)
     {
+        $body->__toString()->willReturn('<xml>hello world!</xml>');
         $this->beConstructedWith('200', $body, ['Content-Type' => 'text/xml']);
     }
 

@@ -9,6 +9,7 @@
 
 namespace Slick\Http\Message;
 
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -22,12 +23,12 @@ class Response extends Message implements ResponseInterface
     /**
      * @var int
      */
-    private $status;
+    private int $status;
 
     /**
      * @var string
      */
-    private $reasonPhrase;
+    private string $reasonPhrase;
 
     /**
      * Creates an HTTP Response message
@@ -36,7 +37,7 @@ class Response extends Message implements ResponseInterface
      * @param string|StreamInterface $body
      * @param array                  $headers
      */
-    public function __construct($status, $body = '', array $headers = [])
+    public function __construct(int $status, StreamInterface|string $body = '', array $headers = [])
     {
         parent::__construct($body);
 
@@ -55,7 +56,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return int Status code.
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->status;
     }
@@ -70,9 +71,9 @@ class Response extends Message implements ResponseInterface
      *     provided status code; if none is provided, implementations MAY
      *     use the defaults as suggested in the HTTP specification.
      * @return static
-     * @throws \InvalidArgumentException For invalid status code arguments.
+     * @throws InvalidArgumentException For invalid status code arguments.
      */
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface
     {
         $response = clone $this;
         $response->setStatus($code, $reasonPhrase);
@@ -86,7 +87,7 @@ class Response extends Message implements ResponseInterface
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @return string Reason phrase; must return an empty string if none present.
      */
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;
     }
@@ -94,13 +95,13 @@ class Response extends Message implements ResponseInterface
     /**
      * Sets the response status code
      *
-     * @param int    $status
+     * @param int $status
      * @param string $reasonPhrase
      */
-    private function setStatus($status, $reasonPhrase = '')
+    private function setStatus(int $status, string $reasonPhrase = ''): void
     {
         HttpCodes::check($status);
-        $this->status = intval($status, 10);
+        $this->status = $status;
         if ($reasonPhrase === '') {
             $this->reasonPhrase = HttpCodes::reasonPhraseFor($this->status);
         }
