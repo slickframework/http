@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -21,8 +23,7 @@ use PhpSpec\ObjectBehavior;
  */
 class RequestUriFactorySpec extends ObjectBehavior
 {
-
-    function let(ServerRequestInterface $request)
+    public function let(ServerRequestInterface $request)
     {
         $request->getServerParams()->willReturn(
             [
@@ -36,12 +37,12 @@ class RequestUriFactorySpec extends ObjectBehavior
         $request->getHeaderLine('host')->willReturn('server.org');
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(RequestUriFactory::class);
     }
 
-    function it_creates_an_uri_with_data_from_a_server_request(ServerRequestInterface $request)
+    public function it_creates_an_uri_with_data_from_a_server_request(ServerRequestInterface $request)
     {
         $uri = $this->createUriFrom($request);
         $uri->shouldBeAnInstanceOf(UriInterface::class);

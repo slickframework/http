@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -30,7 +32,7 @@ final class UploadedFile implements UploadedFileInterface
     /**
      * @var int
      */
-    private int $size;
+    private int $size = 0;
 
     /**
      * @var int
@@ -38,14 +40,14 @@ final class UploadedFile implements UploadedFileInterface
     private int $error;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private string $clientName;
+    private ?string $clientName;
 
     /**
-     * @var string
+     * @var null|string
      */
-    private string $mediaType;
+    private ?string $mediaType;
 
     /**
      * @var string
@@ -70,14 +72,14 @@ final class UploadedFile implements UploadedFileInterface
     /**
      * Creates an uploaded file from PHP's $_FILE upload data
      *
-     * @param array $fileUploadData
+     * @param array{tmp_name: string, size: int, error: int, name: ?string, type: ?string} $fileUploadData
      *
      * @return UploadedFile
      */
     public static function create(array $fileUploadData): UploadedFile
     {
         $uploadedFile = new UploadedFile(new FileStream($fileUploadData['tmp_name']));
-        $uploadedFile->size = $fileUploadData['size'];
+        $uploadedFile->size = (int) $fileUploadData['size'];
         $uploadedFile->error = $fileUploadData['error'];
         $uploadedFile->clientName = $fileUploadData['name'];
         $uploadedFile->mediaType = $fileUploadData['type'];
@@ -106,9 +108,9 @@ final class UploadedFile implements UploadedFileInterface
     /**
      * Retrieve the file size.
      *
-     * @return int|null The file size in bytes or null if unknown.
+     * @return int The file size in bytes
      */
-    public function getSize(): ?int
+    public function getSize(): int
     {
         return $this->size;
     }
@@ -135,7 +137,7 @@ final class UploadedFile implements UploadedFileInterface
      * a malicious filename with the intention to corrupt or hack your
      * application.
      *
-     * @return string|null The filename sent by the client or null if none
+     * @return null|string The filename sent by the client or null if none
      *     was provided.
      */
     public function getClientFilename(): ?string
@@ -150,7 +152,7 @@ final class UploadedFile implements UploadedFileInterface
      * a malicious media type with the intention to corrupt or hack your
      * application.
      *
-     * @return string|null The media type sent by the client or null if none
+     * @return null|string The media type sent by the client or null if none
      *     was provided.
      */
     public function getClientMediaType(): ?string
@@ -186,10 +188,11 @@ final class UploadedFile implements UploadedFileInterface
         $this->checkUpload();
 
         $exception = null;
-        set_error_handler(function ($number, $error) use (&$exception) {
+        set_error_handler(function (int $number, string $error) use (&$exception): bool {
             $exception = new RuntimeException(
                 "Cannot move uploaded file: ($number) $error"
             );
+            return true;
         });
 
         move_uploaded_file($this->tmpFile, $targetPath);
@@ -216,13 +219,13 @@ final class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * Check if target directory exists
+     * Check if the target directory exists
      *
-     * @param $targetPath
+     * @param string $targetPath
      */
-    private function checkTargetDirExists($targetPath): void
+    private function checkTargetDirExists(string $targetPath): void
     {
-        if (!is_dir(dirname($targetPath))) {
+        if (!is_dir(\dirname($targetPath))) {
             throw new InvalidArgumentException(
                 "Cannot move uploaded file: target directory dos not exists."
             );

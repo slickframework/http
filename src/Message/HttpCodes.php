@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -18,7 +20,8 @@ use Slick\Http\Message\Exception\InvalidArgumentException;
  */
 final class HttpCodes
 {
-    private static $codes = [
+    /** @var array<int, string> */
+    private static array $codes = [
         100 => "Continue",
         101 => "Switching Protocols",
         102 => "Processing",
@@ -92,24 +95,24 @@ final class HttpCodes
      *
      * @return string
      */
-    public static function reasonPhraseFor($code)
+    public function reasonPhraseFor($code)
     {
         $status = '';
-        if (array_key_exists($code, self::$codes)) {
+        if (\array_key_exists($code, self::$codes)) {
             $status = self::$codes[$code];
         }
         return $status;
     }
 
     /**
-     * Check if provided code is a valid HTTP status code
+     * Check if the provided code is a valid HTTP status code
      *
      * @param int $code
      */
-    public static function check($code)
+    public function check(int $code): void
     {
-        $regex = '/^(1|2|3|4|5)[0-9]{2}$/i';
-        if (!preg_match($regex, $code)) {
+        $regex = '/^([12345])[0-9]{2}$/i';
+        if (!preg_match($regex, (string) $code)) {
             throw new InvalidArgumentException(
                 "Invalid HTTP response status code."
             );

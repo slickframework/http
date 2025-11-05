@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -18,7 +20,6 @@ use Slick\Http\Message\Exception\RuntimeException;
  */
 abstract class AbstractStream implements StreamInterface
 {
-
     /**
      * @var null|resource
      */
@@ -59,7 +60,7 @@ abstract class AbstractStream implements StreamInterface
      */
     public function close(): void
     {
-        if (is_resource($this->stream)) {
+        if (\is_resource($this->stream)) {
             fclose($this->stream);
         }
     }
@@ -85,11 +86,15 @@ abstract class AbstractStream implements StreamInterface
      */
     public function getSize(): ?int
     {
-        if (is_null($this->stream)) {
+        if ($this->stream === null) {
             return null;
         }
 
         $stats = fstat($this->stream);
+        if ($stats === false) {
+            return null;
+        }
+
         return $stats['size'];
     }
 
@@ -107,7 +112,7 @@ abstract class AbstractStream implements StreamInterface
             );
         }
         $result = ftell($this->stream);
-        if (!is_int($result)) {
+        if (!\is_int($result)) {
             throw new RuntimeException(
                 'Error occurred during tell operation'
             );
@@ -123,7 +128,7 @@ abstract class AbstractStream implements StreamInterface
     public function eof(): bool
     {
         $return = true;
-        if (is_resource($this->stream)) {
+        if (\is_resource($this->stream)) {
             $return = feof($this->stream);
         }
         return $return;
@@ -248,7 +253,7 @@ abstract class AbstractStream implements StreamInterface
     /**
      * Read data from the stream.
      *
-     * @param int $length Read up to $length bytes from the object and return
+     * @param int<1, max> $length Read up to $length bytes from the object and return
      *     them. Fewer than $length bytes may be returned if underlying stream
      *     call returns fewer bytes.
      * @return string Returns the data read from the stream, or an empty string
@@ -307,7 +312,7 @@ abstract class AbstractStream implements StreamInterface
             return stream_get_meta_data($this->stream);
         }
         $metadata = stream_get_meta_data($this->stream);
-        if (! array_key_exists($key, $metadata)) {
+        if (! \array_key_exists($key, $metadata)) {
             return null;
         }
         return $metadata[$key];

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: fsilva
@@ -13,5 +15,4 @@ use Slick\Http\Exception;
 
 class InvalidArgumentException extends PhpException implements Exception
 {
-
 }

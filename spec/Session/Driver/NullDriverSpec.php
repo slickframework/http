@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -20,28 +22,28 @@ use Slick\Http\Session\SessionDriverInterface;
  */
 class NullDriverSpec extends ObjectBehavior
 {
-    function its_a_session_driver()
+    public function its_a_session_driver()
     {
         $this->shouldBeAnInstanceOf(SessionDriverInterface::class);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(NullDriver::class);
     }
 
-    function it_does_not_store_anything()
+    public function it_does_not_store_anything()
     {
         $this->set('foo', 'bar')->shouldBe($this->getWrappedObject());
         $this->get('foo')->shouldBe(null);
     }
 
-    function it_returns_the_default_when_retrieving_a_value()
+    public function it_returns_the_default_when_retrieving_a_value()
     {
         $this->get('foo', false)->shouldBe(false);
     }
 
-    function it_does_not_erase_values()
+    public function it_does_not_erase_values()
     {
         $this->erase('foo')->shouldBe($this->getWrappedObject());
     }

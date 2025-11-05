@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -16,7 +18,6 @@ namespace Slick\Http\Session;
  */
 interface SessionDriverInterface
 {
-
     /**
      * Returns the value store with provided key or the default value.
      *

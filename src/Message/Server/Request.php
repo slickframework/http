@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -24,19 +26,18 @@ use Slick\Http\Message\Uri;
 */
 class Request extends HttpRequest implements ServerRequestInterface
 {
-
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private array $server = [];
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private array $cookies = [];
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private array $queryParams = [];
 
@@ -51,7 +52,7 @@ class Request extends HttpRequest implements ServerRequestInterface
     private mixed $parsedBody = '';
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private array $attributes = [];
 
@@ -61,12 +62,12 @@ class Request extends HttpRequest implements ServerRequestInterface
      * @param string|null              $method
      * @param string|UriInterface|null $target
      * @param string|StreamInterface   $body
-     * @param array                    $headers
+     * @param array<string, string>    $headers
      */
     public function __construct(
-        string $method = null,
-        UriInterface|string $target = null,
-        $body = null,
+        ?string $method = null,
+        UriInterface|string|null $target = null,
+        string|StreamInterface|null $body = null,
         array $headers = []
     ) {
         $method = null === $method
@@ -89,7 +90,8 @@ class Request extends HttpRequest implements ServerRequestInterface
      * Retrieves data related to the incoming request environment,
      * typically derived from PHP's $_SERVER super-global.
      *
-     * @return array
+     * @return array<string, mixed>
+     * @SuppressWarnings(PHPMD)
      */
     public function getServerParams(): array
     {
@@ -104,7 +106,8 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * Retrieves cookies sent by the client to the server.
      *
-     * @return array
+     * @return array<string, mixed>
+     * @SuppressWarnings(PHPMD)
      */
     public function getCookieParams(): array
     {
@@ -117,7 +120,7 @@ class Request extends HttpRequest implements ServerRequestInterface
     /**
      * Return an instance with the specified cookies.
      *
-     * @param array $cookies Array of key/value pairs representing cookies.
+     * @param array<string, mixed> $cookies Array of key/value pairs representing cookies.
      * @return Request
      */
     public function withCookieParams(array $cookies): ServerRequestInterface
@@ -132,7 +135,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      *
      * Retrieves the deserialized query string arguments, if any.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getQueryParams(): array
     {
@@ -145,7 +148,7 @@ class Request extends HttpRequest implements ServerRequestInterface
     /**
      * Return an instance with the specified query string arguments.
      *
-     * @param array $query Array of query string arguments, typically from
+     * @param array<string, mixed> $query Array of query string arguments, typically from
      *     $_GET.
      *
      * @return Request
@@ -173,7 +176,8 @@ class Request extends HttpRequest implements ServerRequestInterface
     /**
      * Create a new instance with the specified uploaded files.
      *
-     * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
+     * @param array<array<UploadedFile>>|array<UploadedFile> $uploadedFiles An array tree of
+     * UploadedFileInterface instances.
      * @return Request
      *
      * @throws InvalidArgumentException if an invalid structure is provided.
@@ -196,7 +200,8 @@ class Request extends HttpRequest implements ServerRequestInterface
     /**
      * Detects the query params from server and/or request URI
      *
-     * @return array
+     * @return array<string, mixed>
+     * @SuppressWarnings(PHPMD)
      */
     private function detectQueryParams(): array
     {
@@ -216,9 +221,9 @@ class Request extends HttpRequest implements ServerRequestInterface
     }
 
     /**
-     * Check if provided files array is valid
+     * Check if a provided files array is valid
      *
-     * @param array $files
+     * @param array<UploadedFile|mixed>|array<array<UploadedFile|mixed>> $files
      *
      * @return bool
      */
@@ -227,7 +232,7 @@ class Request extends HttpRequest implements ServerRequestInterface
         $valid = true;
 
         foreach ($files as $file) {
-            if (is_array($file)) {
+            if (\is_array($file)) {
                 $valid = $this->checkUploadedFiles($files);
                 break;
             }
@@ -243,6 +248,7 @@ class Request extends HttpRequest implements ServerRequestInterface
 
     /**
      * Loads the headers form request
+     * @SuppressWarnings(PHPMD)
      */
     private function loadHeaders(): void
     {
@@ -265,7 +271,7 @@ class Request extends HttpRequest implements ServerRequestInterface
     /**
      * Retrieve any parameters provided in the request body.
      *
-     * @return null|array|object The deserialized body parameters, if any.
+     * @return null|array<string, mixed>|object The deserialized body parameters, if any.
      *     These will typically be an array or object.
      */
     public function getParsedBody(): object|array|null
@@ -280,18 +286,18 @@ class Request extends HttpRequest implements ServerRequestInterface
     /**
      * Return an instance with the specified body parameters.
      *
-     * @param null|array|object $data The deserialized body data. This will
+     * @param mixed $data The deserialized body data. This will
      *     typically be in an array or object.
      *
      * @return Request
      * @throws InvalidArgumentException if an unsupported argument type is
      *     provided.
      */
-    public function withParsedBody($data): ServerRequestInterface
+    public function withParsedBody(mixed $data): ServerRequestInterface
     {
-        if (! is_null($data) &&
-            ! is_array($data) &&
-            ! is_object($data)
+        if (! \is_null($data) &&
+            ! \is_array($data) &&
+            ! \is_object($data)
         ) {
             throw new InvalidArgumentException(
                 "Only NULL, array or Object types could be used to ".
@@ -313,7 +319,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      * deserializing non-form-encoded message bodies; etc. Attributes
      * will be application- and request-specific, and CAN be mutable.
      *
-     * @return array Attributes derived from the request.
+     * @return array<string, mixed> Attributes derived from the request.
      */
     public function getAttributes(): array
     {
@@ -353,7 +359,7 @@ class Request extends HttpRequest implements ServerRequestInterface
      */
     public function getAttribute($name, $default = null): mixed
     {
-        if (array_key_exists($name, $this->attributes)) {
+        if (\array_key_exists($name, $this->attributes)) {
             $default = $this->attributes[$name];
         }
         return $default;
@@ -373,7 +379,7 @@ class Request extends HttpRequest implements ServerRequestInterface
     public function withoutAttribute(string $name): ServerRequestInterface
     {
         $request = clone $this;
-        if (array_key_exists($name, $request->attributes)) {
+        if (\array_key_exists($name, $request->attributes)) {
             unset($request->attributes[$name]);
         }
         return $request;
