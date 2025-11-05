@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -21,8 +23,7 @@ use Slick\Http\Message\Stream\TextStream;
  */
 class UrlEncodedParserSpec extends ObjectBehavior
 {
-
-    function let()
+    public function let()
     {
         $stream = new TextStream('foo=bar&bar=baz');
         $_POST['foo'] = '1';
@@ -30,17 +31,17 @@ class UrlEncodedParserSpec extends ObjectBehavior
         $this->beConstructedWith($stream);
     }
 
-    function its_a_body_parser()
+    public function its_a_body_parser()
     {
         $this->shouldBeAnInstanceOf(BodyParserInterface::class);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(UrlEncodedParser::class);
     }
 
-    function it_parses_the_url_encoded_data()
+    public function it_parses_the_url_encoded_data()
     {
         $this->parse()->shouldBe([
             'foo' => 'bar',

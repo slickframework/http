@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -27,27 +29,25 @@ use Slick\Http\Session\SessionDriverInterface;
  */
 class SessionMiddlewareSpec extends ObjectBehavior
 {
-
-    function let(SessionDriverInterface $sessionDriver)
+    public function let(SessionDriverInterface $sessionDriver)
     {
         $this->beConstructedWith($sessionDriver);
     }
 
-    function its_a_middleware()
+    public function its_a_middleware()
     {
         $this->shouldBeAnInstanceOf(MiddlewareInterface::class);
     }
 
-    function it_is_initializable_with_a_session_driver()
+    public function it_is_initializable_with_a_session_driver()
     {
         $this->shouldHaveType(SessionMiddleware::class);
     }
 
-    function it_add_a_session_driver_to_the_request(
+    public function it_add_a_session_driver_to_the_request(
         RequestHandlerInterface $handler,
         ResponseInterface $response
-    )
-    {
+    ) {
         $request = new Request();
 
         /** @var ServerRequestInterface $serverRequest */

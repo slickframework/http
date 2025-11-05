@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -21,23 +23,22 @@ use Slick\Http\Message\Stream\TextStream;
  */
 class MessageSpec extends ObjectBehavior
 {
-
-    function it_an_http_message()
+    public function it_an_http_message()
     {
         $this->shouldHaveType(MessageInterface::class);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(Message::class);
     }
 
-    function it_has_a_protocol_version()
+    public function it_has_a_protocol_version()
     {
         $this->getProtocolVersion()->shouldBe("1.1");
     }
 
-    function it_creates_message_with_new_protocol_version()
+    public function it_creates_message_with_new_protocol_version()
     {
         $message = $this->withProtocolVersion("1.0");
         $message->shouldNotBe($this->getWrappedObject());
@@ -45,12 +46,12 @@ class MessageSpec extends ObjectBehavior
         $message->getProtocolVersion()->shouldBe('1.0');
     }
 
-    function it_has_a_list_of_headers()
+    public function it_has_a_list_of_headers()
     {
         $this->getHeaders()->shouldBeArray();
     }
 
-    function it_creates_message_with_new_header()
+    public function it_creates_message_with_new_header()
     {
         $message = $this->withHeader('Content-Type', 'text/xml');
         $message->shouldNotBe($this->getWrappedObject());
@@ -59,7 +60,7 @@ class MessageSpec extends ObjectBehavior
         $message->getHeader('content-type')->shouldBe(['text/xml']);
     }
 
-    function it_can_retrieve_header_lines()
+    public function it_can_retrieve_header_lines()
     {
         $message = $this->withHeader('Content-Type', 'text/xml');
         $message = $message->withAddedHeader('Content-type', ['utf-8']);
@@ -68,7 +69,7 @@ class MessageSpec extends ObjectBehavior
         $message->getHeaderLine('content-Type')->shouldBe('text/xml,utf-8');
     }
 
-    function it_creates_message_without_a_header()
+    public function it_creates_message_without_a_header()
     {
         $source = $this->withHeader('Content-Type', 'text/xml');
         $message = $source->withoutHeader('content-type');
@@ -78,14 +79,14 @@ class MessageSpec extends ObjectBehavior
         $source->hasHeader('content-type')->shouldBe(true);
     }
 
-    function it_has_a_body_content_stream()
+    public function it_has_a_body_content_stream()
     {
         $body = $this->getBody();
         $body->shouldHaveType(TextStream::class);
         $body->getSize()->shouldBe(0);
     }
 
-    function it_creates_a_message_with_a_new_body()
+    public function it_creates_a_message_with_a_new_body()
     {
         $body = new TextStream('body');
         $message = $this->withBody($body);

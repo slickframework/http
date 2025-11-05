@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -41,21 +43,21 @@ class CallableMiddleware implements MiddlewareInterface
 
     /**
      * @param callable $callable
-     * @param array    $arguments
+     * @param array<mixed>    $arguments
      *
      * @return ResponseInterface
      */
-    public static function execute(callable $callable, array $arguments)
+    public static function execute(callable $callable, array $arguments): ResponseInterface
     {
-        $return = call_user_func_array($callable, $arguments);
+        $return = \call_user_func_array($callable, $arguments);
 
         if ($return instanceof ResponseInterface) {
             return $return;
         }
 
-        $canBeUsedAsText = is_null($return)
-            || is_scalar($return)
-            || (is_object($return) && method_exists($return, '__toString'));
+        $canBeUsedAsText = \is_null($return)
+            || \is_scalar($return)
+            || (\is_object($return) && method_exists($return, '__toString'));
 
         if (! $canBeUsedAsText) {
             throw new UnexpectedValueException(
@@ -79,12 +81,6 @@ class CallableMiddleware implements MiddlewareInterface
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
-        $response = self::execute($this->callable, [$request, $handler]);
-        if (!$response instanceof ResponseInterface) {
-            throw new UnexpectedValueException(
-                sprintf('The middleware must return an instance of %s', ResponseInterface::class)
-            );
-        }
-        return $response;
+        return self::execute($this->callable, [$request, $handler]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -23,16 +25,16 @@ class RequestUriFactory
     /**
      * @var ServerRequestInterface
      */
-    private $request;
+    private ServerRequestInterface $request;
 
     /**
      * Creates an URI based on provided request data
      *
      * @param ServerRequestInterface $request
      *
-     * @return UriInterface
+     * @return UriInterface|Uri
      */
-    public function createUriFrom(ServerRequestInterface $request)
+    public function createUriFrom(ServerRequestInterface $request): UriInterface|Uri
     {
         $this->request = $request;
         return new Uri($this->generateUrl());
@@ -43,9 +45,9 @@ class RequestUriFactory
      *
      * @param ServerRequestInterface $request
      *
-     * @return UriInterface
+     * @return UriInterface|Uri
      */
-    public static function create(ServerRequestInterface $request)
+    public static function create(ServerRequestInterface $request): UriInterface|Uri
     {
         $factory = new RequestUriFactory();
         return $factory->createUriFrom($request);
@@ -56,18 +58,18 @@ class RequestUriFactory
      *
      * @return string
      */
-    private function generateUrl()
+    private function generateUrl(): string
     {
         $hostHeader = $this->request->getHeaderLine('host');
-        $defaultHost = strlen($hostHeader) > 0 ? $hostHeader : 'unknown-host';
+        $defaultHost = \strlen($hostHeader) > 0 ? $hostHeader : 'unknown-host';
         $host = $this->getServerParam('SERVER_NAME', $defaultHost);
         $scheme = $this->getServerParam('REQUEST_SCHEME', 'http');
         $uri = $this->getServerParam('REQUEST_URI', '/');
         $port = $this->getServerParam('SERVER_PORT', '80');
 
-        $port = in_array($port, ['80', '443']) ? '' : ":{$port}";
+        $port = \in_array($port, ['80', '443']) ? '' : ":$port";
 
-        return "{$scheme}://{$host}{$port}{$uri}";
+        return "$scheme://$host$port$uri";
     }
 
     /**
@@ -76,14 +78,14 @@ class RequestUriFactory
      * If no match is found the default value is returned instead
      *
      * @param string $name    $_SERVER super-global key name
-     * @param null   $default
+     * @param mixed   $default
      *
      * @return null|string
      */
-    private function getServerParam($name, $default = null)
+    private function getServerParam(string $name, mixed $default = null): ?string
     {
         $data = $this->request->getServerParams();
-        if (array_key_exists($name, $data)) {
+        if (\array_key_exists($name, $data)) {
             $default = trim($data[$name]);
         }
         return $default;

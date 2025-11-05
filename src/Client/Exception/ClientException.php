@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -12,7 +14,6 @@ namespace Slick\Http\Client\Exception;
 use Exception;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\RequestInterface;
-use Throwable;
 
 /**
  * ClientException
@@ -21,11 +22,10 @@ use Throwable;
  */
 abstract class ClientException extends Exception implements ClientExceptionInterface
 {
-
     /**
      * @var RequestInterface
      */
-    private $request;
+    private RequestInterface $request;
 
     /**
      * Creates a NetworkException
@@ -33,14 +33,16 @@ abstract class ClientException extends Exception implements ClientExceptionInter
      * @param RequestInterface $request
      * @param string $message
      */
-    public function __construct(RequestInterface $request, $message = "")
+    public function __construct(RequestInterface $request, string $message = "")
     {
         parent::__construct($message);
         $this->request = $request;
     }
 
     /**
-     * @inheritDoc
+     * Retrieves the associated request instance.
+     *
+     * @return RequestInterface The request associated with this instance.
      */
     public function getRequest(): RequestInterface
     {

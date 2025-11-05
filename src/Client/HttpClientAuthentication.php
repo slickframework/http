@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -16,10 +18,10 @@ namespace Slick\Http\Client;
 */
 class HttpClientAuthentication
 {
-    const AUTH_BASIC  = CURLAUTH_BASIC;
-    const AUTH_DIGEST = CURLAUTH_DIGEST;
-    const AUTH_NTLM   = CURLAUTH_NTLM;
-    const AUTH_ANY    = CURLAUTH_ANY;
+    public const AUTH_BASIC  = CURLAUTH_BASIC;
+    public const AUTH_DIGEST = CURLAUTH_DIGEST;
+    public const AUTH_NTLM   = CURLAUTH_NTLM;
+    public const AUTH_ANY    = CURLAUTH_ANY;
 
     /**
      * @var string

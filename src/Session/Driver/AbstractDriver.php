@@ -1,10 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fsilva
- * Date: 02-11-2017
- * Time: 17:47
- */
+
+declare(strict_types=1);
 
 namespace Slick\Http\Session\Driver;
 
@@ -19,27 +15,27 @@ abstract class AbstractDriver implements SessionDriverInterface
     /**
      * @var null|string
      */
-    protected $domain = null;
+    protected ?string $domain = null;
 
     /**
      * @var int
      */
-    protected $lifetime = 0;
+    protected int $lifetime = 0;
 
     /**
      * @var string
      */
-    protected $name = 'ID';
+    protected string $name = 'ID';
 
     /**
      * @var string
      */
-    protected $prefix = 'slick_';
+    protected string $prefix = 'slick_';
 
     /**
      * Creates a Session Driver
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function __construct(array $options = [])
     {
@@ -59,10 +55,11 @@ abstract class AbstractDriver implements SessionDriverInterface
      * @return mixed The stored value or the default value if key
      *  was not found.
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
-        if (array_key_exists("{$this->prefix}{$key}", $_SESSION)) {
-            $default = $_SESSION["{$this->prefix}{$key}"];
+        $sessionKey = $this->prefix . $key;
+        if (\array_key_exists($sessionKey, $this->fetchSession())) {
+            $default = $this->fetchSession()[$sessionKey];
         }
         return $default;
     }
@@ -73,12 +70,14 @@ abstract class AbstractDriver implements SessionDriverInterface
      * @param string $key The key used to store the value in session.
      * @param mixed $value The value to store under the provided key.
      *
-     * @return self|$this|SessionDriverInterface Self instance for
+     * @return self Self instance for
      *   method call chains.
+     * @SuppressWarnings(PHPMD)
      */
-    public function set($key, $value)
+    public function set($key, $value): self
     {
-        $_SESSION["{$this->prefix}{$key}"] = $value;
+        $sessionKey = $this->prefix . $key;
+        $_SESSION[$sessionKey] = $value;
         return $this;
     }
 
@@ -87,12 +86,23 @@ abstract class AbstractDriver implements SessionDriverInterface
      *
      * @param string $key The key used to store the value in session.
      *
-     * @return self|$this|SessionDriverInterface Self instance for
+     * @return self Self-instance for
      *   method call chains.
+     * @SuppressWarnings(PHPMD)
      */
-    public function erase($key)
+    public function erase($key): self
     {
-        unset($_SESSION["{$this->prefix}{$key}"]);
+        $sessionKey = $this->prefix . $key;
+        unset($_SESSION[$sessionKey]);
         return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     * @SuppressWarnings(PHPMD)
+     */
+    private function fetchSession(): array
+    {
+        return $_SESSION;
     }
 }

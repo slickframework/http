@@ -1,140 +1,118 @@
 <?php
 
-/**
- * This file is part of Http
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+declare(strict_types=1);
 
 namespace Slick\Http\Message\Server;
+
+use Psr\Http\Message\UploadedFileInterface as PSRFile;
 
 /**
  * UploadedFilesFactory
  *
  * @package Slick\Http\Message\Server
  */
-class UploadedFilesFactory
+final class UploadedFilesFactory
 {
-
     /**
-     * Creates the uploaded file objects within a normalized files tree
+     * Creates the uploaded file objects within a normalized files tree.
      *
-     * @return array|UploadedFile[]
+     * @return array<string, array<int|string, array<int|string, PSRFile>|PSRFile>|UploadedFile>
+     * @SuppressWarnings(PHPMD)
      */
-    public static function createFiles()
+    public static function createFiles(): array
     {
-        $fixer = new static();
-        $files = $fixer->saneFilesArray($_FILES);
-        $fixed = [];
-        foreach ($files as $key => $data) {
-            $fixed[$key] = $fixer->createUploadedFile($data);
-        }
-        return $fixed;
+        $factory = new self();
+        return $factory->normalize($_FILES);
     }
 
     /**
-     * Helper function to recursively create UploadedFile objects
+     * Converts $_FILES to UploadedFile instances.
      *
-     * @param array $data
+     * If the $_FILES array is multidimensional, it will return an array of UploadedFile instances.
+     * It will preserve the keys of the original array.
      *
-     * @return array|UploadedFile
+     * @param array<string, array{
+     *     tmp_name: string|array<string|int, string|array<string|int, string>>,
+     *     size: int|array<string|int, int|array<string|int, int>>,
+     *     error: int|array<string|int, int|array<string|int, int>>,
+     *     name: string|array<string|int, string|array<string|int, string>>,
+     *     type: string|array<string|int, string|array<string|int, string>>
+     * }> $files
+     * @return array<string, array<int|string, array<int|string, PSRFile>|PSRFile>|UploadedFile>
+     * @SuppressWarnings(PHPMD)
      */
-    private function createUploadedFile($data)
+    private function normalize(array $files): array
     {
-        if (array_key_exists('tmp_name', $data)) {
-            return UploadedFile::create($data);
-        }
+        $normalized = [];
 
-        $result = [];
-        foreach ($data as $key => $datum) {
-            $result[$key] = $this->createUploadedFile($datum);
-        }
-        return $result;
-    }
-
-    /**
-     * Fixes the $_FILES array structure
-     *
-     * For each subtree in the file tree that's more than one item deep:
-     *      For each leaf of the subtree:
-     *      $leaf[a][b][c] ... [y][z] -> $result[z][a][b][c]  ... [y]
-     *
-     *
-     * @see: https://stackoverflow.com/a/24397828/1271488
-     *
-     * @param array $files
-     * @return array
-     */
-    private function saneFilesArray(array $files)
-    {
-        $result = [];
-
-        foreach ($files as $field => $data) {
-            foreach ($data as $key => $val) {
-                $result[$field] = [];
-                if (!is_array($val)) {
-                    $result[$field] = $data;
-                    continue;
-                }
-
-                $res = [];
-                $this->filesFlip($res, [], $data);
-                $result[$field] += $res;
+        foreach ($files as $field => $fileData) {
+            if (\is_string($fileData['tmp_name'])) {
+                /** @var array{tmp_name: string, size: int, error: int, name: string|null, type: string|null} $fileData */
+                $normalized[$field] = UploadedFile::create([
+                    'tmp_name' => (string) $fileData['tmp_name'],
+                    'size'     => (int) $fileData['size'],
+                    'error'    => (int) $fileData['error'],
+                    'name'     => (string) $fileData['name'],
+                    'type'     => (string) $fileData['type'],
+                ]);
+                continue;
             }
+
+            $normalized[$field] = $this->normalizeNestedFiles(
+                (array) $fileData['tmp_name'],
+                (array) $fileData['size'],
+                (array) $fileData['error'],
+                (array) $fileData['name'],
+                (array) $fileData['type']
+            );
         }
 
-        return $result;
+        return $normalized;
     }
 
     /**
-     * Move the innermost key to the outer spot
+     * Normalizes a nested set of uploaded files (recursively)
      *
-     * @param array  $result
-     * @param array  $keys
-     * @param mixed  $value
+     * @param array<string|int, string|array<string|int, string>> $tmpNames
+     * @param array<string|int, int|array<string|int, int>> $sizes
+     * @param array<string|int, int|array<string|int, int>> $errors
+     * @param array<string|int, string|array<string|int, string>> $names
+     * @param array<string|int, string|array<string|int, string>> $types
+     *
+     * @return array<string, array<int|string, array<int|string, PSRFile>|PSRFile>|UploadedFile>
      */
-    private function filesFlip(&$result, $keys, $value)
-    {
-        if (is_array($value)) {
-            foreach ($value as $k => $v) {
-                $newKeys = $keys;
-                array_push($newKeys, $k);
-                $this->filesFlip($result, $newKeys, $v);
+    private function normalizeNestedFiles(
+        array $tmpNames,
+        array $sizes,
+        array $errors,
+        array $names,
+        array $types
+    ): array {
+        $normalized = [];
+
+        foreach ($tmpNames as $key => $tmpName) {
+            if (\is_array($tmpName)) {
+                $normalized[$key] = $this->normalizeNestedFiles(
+                    $tmpName,
+                    (array) ($sizes[$key] ?? []),
+                    (array) ($errors[$key] ?? []),
+                    (array) ($names[$key] ?? []),
+                    (array) ($types[$key] ?? [])
+                );
+                continue;
             }
-            return;
+
+            /** @var array{tmp_name: string, size: int, error: int, name: string|null, type: string|null} $fileUploadData */
+            $fileUploadData = [
+                'tmp_name' => $tmpName,
+                'size' => (int) ($sizes[$key] ?? 0),
+                'error' => (int) ($errors[$key] ?? 0),
+                'name' => (string) (!\is_array($names[$key]) ? $names[$key] : ''),
+                'type' => (string) (!\is_array($types[$key]) ? $types[$key] : ''),
+            ];
+            $normalized[$key] = UploadedFile::create($fileUploadData);
         }
 
-        $res = $value;
-        // Move the innermost key to the outer spot
-        $first = array_shift($keys);
-        array_push($keys, $first);
-        foreach (array_reverse($keys) as $kk) {
-            // You might think we'd say $res[$kk] = $res, but $res starts
-            // out not as an array
-            $res = array($kk => $res);
-        }
-
-        $result = $this->arrayMergeRecursive($result, $res);
-    }
-
-    /**
-     * Recursively merge provided arrays
-     *
-     * @param array|string $array1
-     * @param array|string $array2
-     *
-     * @return array
-     */
-    private function arrayMergeRecursive($array1, $array2)
-    {
-        if (!is_array($array1) or !is_array($array2)) {
-            return $array2;
-        }
-
-        foreach ($array2 as $sKey2 => $sValue2) {
-            $array1[$sKey2] = $this->arrayMergeRecursive(@$array1[$sKey2], $sValue2);
-        }
-        return $array1;
+        return $normalized;
     }
 }

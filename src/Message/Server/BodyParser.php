@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -29,25 +31,25 @@ class BodyParser
     private $contentType;
 
     /**
-     * @var array
+     * @var array<string, array<string>>
      */
-    private static $parsers = [
+    private static array $parsers = [
         JsonParser::class => ['+json', 'application/json'],
         XmlParser::class  => ['+xml', 'text/xml'],
         UrlEncodedParser::class => ['urlencoded']
     ];
 
     /**
-     * Creates a Body Parser for provided header
-     * @param $contentType
+     * Creates a Body Parser for the provided header
+     * @param string $contentType
      */
-    public function __construct($contentType)
+    public function __construct(string $contentType)
     {
         $this->contentType = $contentType;
     }
 
     /**
-     * Parses provided message body
+     * Parses provided the message body
      *
      * @param StreamInterface $body
      * @return mixed
@@ -81,21 +83,19 @@ class BodyParser
      * Adds a body parser to parsers map
      *
      * @param string $className
-     * @param array  $contentTypes
+     * @param array<string>  $contentTypes
      *
      * @throws InvalidArgumentException if provided class does not implement BodyParserInterface
      */
-    public static function addParser($className, array $contentTypes)
+    public static function addParser(string $className, array $contentTypes): void
     {
-        if (! is_a($className, BodyParserInterface::class)) {
+        if (! is_subclass_of($className, BodyParserInterface::class)) {
             throw new InvalidArgumentException(
                 "Parser objects MUST implement the BodyParserInterface interface."
             );
         }
 
-        $existing = isset(self::$parsers[$className])
-            ? self::$parsers[$className]
-            : [];
+        $existing = self::$parsers[$className] ?? [];
         array_unshift(
             self::$parsers[$className],
             array_merge($existing, $contentTypes)

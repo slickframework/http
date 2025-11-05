@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -44,7 +46,7 @@ class RequestHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $response = call_user_func($this->callback, $request);
+        $response = \call_user_func($this->callback, $request);
         return $response;
     }
 }

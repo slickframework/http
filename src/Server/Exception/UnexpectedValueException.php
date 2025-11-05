@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -19,5 +21,4 @@ use UnexpectedValueException as PhpException;
  */
 class UnexpectedValueException extends PhpException implements Exception
 {
-
 }

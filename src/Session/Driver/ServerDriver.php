@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -18,11 +20,10 @@ use Slick\Http\Session\SessionDriverInterface;
 */
 class ServerDriver extends AbstractDriver implements SessionDriverInterface
 {
-
     /**
      * Creates a Server Session Driver
      *
-     * @param array $options
+     * @param array<string, mixed> $options
      */
     public function __construct(array $options = [])
     {

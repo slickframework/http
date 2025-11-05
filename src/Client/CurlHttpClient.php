@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -36,24 +38,21 @@ final class CurlHttpClient implements ClientInterface
     private ?HttpClientAuthentication $auth = null;
 
     /**
-     * @var array
+     * @var array<int, int|string|list<non-falsy-string>|non-falsy-string|true>
      */
     private array $options = [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_HEADER => true
     ];
 
-    /**
-     * @var null|CurlHandle
-     */
-    private ?CurlHandle $handler = null;
+    private mixed $handler = null;
 
     /**
      * Creates a CURL HTTP Client
      *
      * @param Uri|null                      $url
      * @param HttpClientAuthentication|null $auth
-     * @param array                         $options
+     * @param array<int, int|list<non-falsy-string>|string|true> $options
      */
     public function __construct(
         ?Uri $url = null,
@@ -92,7 +91,7 @@ final class CurlHttpClient implements ClientInterface
                 throw new RequestException($request, curl_error($this->handler));
         }
 
-        return $this->createResponse($result);
+        return $this->createResponse(\is_string($result) ? $result : '');
     }
 
     /**
@@ -102,7 +101,7 @@ final class CurlHttpClient implements ClientInterface
      */
     private function prepare(RequestInterface $request): void
     {
-        if (is_resource($this->handler)) {
+        if ($this->handler) {
             $this->reset($this->handler);
         }
         $this->setUrl($request);
@@ -126,16 +125,21 @@ final class CurlHttpClient implements ClientInterface
     private function setUrl(RequestInterface $request): void
     {
         $target = $request->getRequestTarget();
+        /** @var array{scheme?: string, host?: string, port?: int<0, 65535>, user?: string, pass?: string,
+         *     path?: string, query?: string, fragment?: string}|false $parts */
         $parts = parse_url($target);
 
         $uri = $this->url instanceof Uri
             ? $this->url
             : $request->getUri();
 
-        $uri = $uri->withPath($parts['path']);
-        $uri = array_key_exists('query', $parts)
-            ? $uri->withQuery($parts['query'])
-            : $uri;
+        if (\is_array($parts)) {
+            $uri = \array_key_exists('path', $parts) ? $uri->withPath($parts['path']) : $uri;
+            $uri =  \array_key_exists('query', $parts)
+                ? $uri->withQuery($parts['query'])
+                : $uri;
+        }
+
 
         $this->options[CURLOPT_URL] = (string) $uri;
     }
@@ -157,11 +161,12 @@ final class CurlHttpClient implements ClientInterface
     /**
      * Resets the cURL handler
      *
-     * @param resource $ch
+     * @param resource $handler
+     * @param-out CurlHandle|false $handler
      */
-    private function reset(&$ch): void
+    private function reset(&$handler): void
     {
-        $ch = curl_init();
+        $handler = curl_init();
     }
 
     /**
@@ -181,16 +186,16 @@ final class CurlHttpClient implements ClientInterface
     /**
      * Splits the cURL execution result into header and body
      *
-     * @param $result
+     * @param string $result
      *
-     * @return array
+     * @return array{0: string, 1: string}
      */
-    private function splitHeaderFromBody($result): array
+    private function splitHeaderFromBody(string $result): array
     {
-        $header_size = curl_getinfo($this->handler, CURLINFO_HEADER_SIZE);
+        $headerSize = curl_getinfo($this->handler, CURLINFO_HEADER_SIZE);
 
-        $header = substr($result, 0, $header_size);
-        $body = substr($result, $header_size);
+        $header = substr($result, 0, $headerSize);
+        $body = substr($result, $headerSize);
 
         return [trim($header), trim($body)];
     }
@@ -200,7 +205,7 @@ final class CurlHttpClient implements ClientInterface
      *
      * @param string $header
      *
-     * @return array
+     * @return array<string>
      */
     private function parseHeaders(string $header): array
     {
@@ -211,7 +216,7 @@ final class CurlHttpClient implements ClientInterface
                 continue;
             }
 
-            $middle=explode(":", $line);
+            $middle = explode(":", $line);
             $headers[trim($middle[0])] = trim($middle[1]);
         }
         return $headers;
@@ -222,7 +227,7 @@ final class CurlHttpClient implements ClientInterface
      */
     public function __destruct()
     {
-        if (is_resource($this->handler)) {
+        if ($this->handler) {
             curl_close($this->handler);
         }
     }

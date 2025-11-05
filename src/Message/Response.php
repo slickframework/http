@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -12,6 +14,7 @@ namespace Slick\Http\Message;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Slick\Http\Message\Stream\TextStream;
 
 /**
  * Response
@@ -35,11 +38,13 @@ class Response extends Message implements ResponseInterface
      *
      * @param int                    $status
      * @param string|StreamInterface $body
-     * @param array                  $headers
+     * @param array<string, string>  $headers
      */
     public function __construct(int $status, StreamInterface|string $body = '', array $headers = [])
     {
-        parent::__construct($body);
+        $body = \is_string($body) ? new TextStream($body) : $body;
+        $body->rewind();
+        parent::__construct($body->getContents());
 
         $this->setStatus($status);
 
@@ -100,10 +105,10 @@ class Response extends Message implements ResponseInterface
      */
     private function setStatus(int $status, string $reasonPhrase = ''): void
     {
-        HttpCodes::check($status);
+        (new HttpCodes())->check($status);
         $this->status = $status;
         if ($reasonPhrase === '') {
-            $this->reasonPhrase = HttpCodes::reasonPhraseFor($this->status);
+            $this->reasonPhrase = (new HttpCodes())->reasonPhraseFor($this->status);
         }
     }
 }

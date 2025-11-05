@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -19,7 +21,6 @@ use Slick\Http\Message\Exception\InvalidArgumentException;
  */
 class FileStream extends AbstractStream implements StreamInterface
 {
-
     /**
      * Creates a File Stream
      *
@@ -35,6 +36,13 @@ class FileStream extends AbstractStream implements StreamInterface
             );
         }
 
-        $this->stream = fopen($file, 'r');
+        $string = fopen($file, 'r');
+        if ($string === false) {
+            throw new InvalidArgumentException(
+                "Cannot create stream: could not open file."
+            );
+        }
+
+        $this->stream = $string;
     }
 }

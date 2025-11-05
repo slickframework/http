@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -29,23 +31,23 @@ class RequestHandlerSpec extends ObjectBehavior
      */
     private $callback;
 
-    function let()
+    public function let()
     {
         $this->callback = function (ServerRequestInterface $request) { return new Response(204); };
         $this->beConstructedWith($this->callback);
     }
 
-    function its_a_request_handler()
+    public function its_a_request_handler()
     {
         $this->shouldBeAnInstanceOf(RequestHandlerInterface::class);
     }
 
-    function it_is_initializable_with_a_callable()
+    public function it_is_initializable_with_a_callable()
     {
         $this->shouldHaveType(RequestHandler::class);
     }
 
-    function it_handles_a_server_request_returning_a_response()
+    public function it_handles_a_server_request_returning_a_response()
     {
         $this->handle(new Request())->shouldBeAnInstanceOf(ResponseInterface::class);
     }

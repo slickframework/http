@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -18,5 +20,4 @@ use Slick\Http\Message\MessageException;
  */
 class InvalidArgumentException extends PhpInvalidArgumentException implements MessageException
 {
-
 }

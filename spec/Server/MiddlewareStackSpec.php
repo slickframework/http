@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -28,35 +30,33 @@ class MiddlewareStackSpec extends ObjectBehavior
 {
     private $middlewareStack;
 
-    function let(MiddlewareInterface $mX2)
+    public function let(MiddlewareInterface $mX2)
     {
-        $mX1 = new CallableMiddleware(function($request, $handler) {return $handler->handle($request);});
+        $mX1 = new CallableMiddleware(function ($request, $handler) {return $handler->handle($request);});
         $this->middlewareStack = [$mX1, $mX2];
         $this->beConstructedWith($this->middlewareStack);
     }
 
-    function it_is_initializable_with_a_list_of_middleware_objects()
+    public function it_is_initializable_with_a_list_of_middleware_objects()
     {
         $this->shouldHaveType(MiddlewareStack::class);
     }
 
-    function it_calls_every_middleware_in_the_stack(
+    public function it_calls_every_middleware_in_the_stack(
         MiddlewareInterface $mX2,
         ServerRequestInterface $request,
         ResponseInterface $response
-    )
-    {
+    ) {
         $mX2->process($request, Argument::type(RequestHandlerInterface::class))
             ->shouldBeCalled()
             ->willReturn($response);
         $this->process($request)->shouldBe($response);
     }
 
-    function it_throws_an_exception_if_returned_middleware_value_is_not_a_response(
+    public function it_throws_an_exception_if_returned_middleware_value_is_not_a_response(
         MiddlewareInterface $mX2,
         ServerRequestInterface $request
-    )
-    {
+    ) {
         $mX2->process($request, Argument::type(RequestHandlerInterface::class))
             ->shouldBeCalled()
             ->willThrow(new UnexpectedValueException('Error'));

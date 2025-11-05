@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -19,7 +21,7 @@ use Slick\Http\Message\Exception\InvalidArgumentException;
 */
 class Uri implements UriInterface
 {
-
+    /** @var array<string, int>|int[]  */
     private array $defaultPorts = [
         'http' => 80,
         'https' => 443
@@ -38,7 +40,7 @@ class Uri implements UriInterface
     /**
      * @var string
      */
-    private string $port = '';
+    private int|string $port = '';
 
     /**
      * @var string
@@ -82,7 +84,24 @@ class Uri implements UriInterface
             );
         }
 
-        foreach (parse_url($url) as $property => $value) {
+        /** @var array{scheme?: string, host?: string, port?: int<0, 65535>, user?: string, pass?: string,
+         *     path?: string, query?: string, fragment?: string}|false $parsedUrl */
+        $parsedUrl = parse_url($url);
+
+        if (!\is_array($parsedUrl) || empty($parsedUrl)) {
+            throw new InvalidArgumentException(
+                "The URL entered is invalid. URI cannot be created."
+            );
+        }
+
+        foreach ($parsedUrl as $property => $value) {
+            if (property_exists($this, $property)) {
+                // Normaliza todos os valores para string antes de atribuir
+                $this->$property = (string) $value;
+            }
+        }
+
+        foreach ($parsedUrl as $property => $value) {
             $this->$property = $value;
         }
     }
@@ -140,11 +159,11 @@ class Uri implements UriInterface
      */
     public function getPort(): ?int
     {
-        $default = array_key_exists($this->getScheme(), $this->defaultPorts)
+        $default = \array_key_exists($this->getScheme(), $this->defaultPorts)
             ? $this->defaultPorts[$this->getScheme()]
             : -1;
 
-        if ((string) $default === $this->port) {
+        if ((string) $default === (string) $this->port) {
             return null;
         }
 
@@ -210,7 +229,7 @@ class Uri implements UriInterface
      * @param string|null $password The password associated with $user.
      * @return static A new instance with the specified user information.
      */
-    public function withUserInfo(string $user, string $password = null): UriInterface
+    public function withUserInfo(string $user, ?string $password = null): UriInterface
     {
         $uri = clone $this;
         $uri->user = $user;
@@ -307,8 +326,8 @@ class Uri implements UriInterface
             ? "//{$this->getAuthority()}"
             : '';
         $text .= '/'. ltrim($this->getPath(), '/');
-        $text .= strlen($this->query) > 0 ? "?$this->query" : '';
-        $text .= strlen($this->fragment) > 0 ? "#$this->fragment" : '';
+        $text .= \strlen($this->query) > 0 ? "?$this->query" : '';
+        $text .= \strlen($this->fragment) > 0 ? "#$this->fragment" : '';
         return $text;
     }
 

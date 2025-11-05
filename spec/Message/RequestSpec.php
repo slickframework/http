@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -27,29 +29,31 @@ class RequestSpec extends ObjectBehavior
         'Content-Type' => 'text/plain'
     ];
 
-    function let(StreamInterface $body)
+    public function let(StreamInterface $body)
     {
         $this->uri = new Uri('http://example.com/path?foo=bar');
         $body->__toString()->willReturn('Hello world!');
+        $body->getContents()->willReturn('Hello world!');
+        $body->rewind()->shouldBeCalled();
         $this->beConstructedWith('POST', $this->uri, $body, $this->headers);
     }
 
-    function its_an_http_request_message()
+    public function its_an_http_request_message()
     {
         $this->shouldHaveType(RequestInterface::class);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(Request::class);
     }
 
-    function it_has_a_target()
+    public function it_has_a_target()
     {
         $this->getRequestTarget()->shouldBe('/path?foo=bar');
     }
 
-    function it_can_create_a_message_with_new_target()
+    public function it_can_create_a_message_with_new_target()
     {
         $request = $this->withRequestTarget('/path');
         $request->shouldNotBe($this->getWrappedObject());
@@ -57,12 +61,12 @@ class RequestSpec extends ObjectBehavior
         $request->getRequestTarget()->shouldBe('/path');
     }
 
-    function it_has_a_method()
+    public function it_has_a_method()
     {
         $this->getMethod()->shouldBe('POST');
     }
 
-    function it_can_create_a_request_with_a_new_method()
+    public function it_can_create_a_request_with_a_new_method()
     {
         $request = $this->withMethod('PUT');
         $request->shouldNotBe($this->getWrappedObject());
@@ -70,13 +74,13 @@ class RequestSpec extends ObjectBehavior
         $request->getMethod()->shouldBe('PUT');
     }
 
-    function it_has_an_uri()
+    public function it_has_an_uri()
     {
         $this->getUri()->shouldBe($this->uri);
         $this->getHeaderLine('host')->shouldBe('example.com');
     }
 
-    function it_can_create_a_request_with_new_uri()
+    public function it_can_create_a_request_with_new_uri()
     {
         $uri = new Uri('https://example.org');
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -19,13 +21,12 @@ use PhpSpec\ObjectBehavior;
  */
 class HttpClientAuthenticationSpec extends ObjectBehavior
 {
-
-    function let()
+    public function let()
     {
         $this->beConstructedWith('username', 'password', HttpClientAuthentication::AUTH_ANY);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(HttpClientAuthentication::class);
     }
@@ -35,12 +36,12 @@ class HttpClientAuthenticationSpec extends ObjectBehavior
         $this->username()->shouldBe('username');
     }
 
-    function it_has_a_password()
+    public function it_has_a_password()
     {
         $this->password()->shouldBe('password');
     }
 
-    function it_has_an_authentication_type()
+    public function it_has_an_authentication_type()
     {
         $this->type()->shouldBe(HttpClientAuthentication::AUTH_ANY);
     }
