@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -21,8 +23,7 @@ use Slick\Http\Message\Stream\TextStream;
  */
 class XmlParserSpec extends ObjectBehavior
 {
-
-    function let()
+    public function let()
     {
         $xml = <<<EOX
 <?xml version="1.0" encoding="UTF-8"?>
@@ -37,17 +38,17 @@ EOX;
         $this->beConstructedWith($stream);
     }
 
-    function its_a_body_parser()
+    public function its_a_body_parser()
     {
         $this->shouldBeAnInstanceOf(BodyParserInterface::class);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(XmlParser::class);
     }
 
-    function it_parses_the_body_as_xml()
+    public function it_parses_the_body_as_xml()
     {
         $this->parse()->shouldBeAnInstanceOf(\SimpleXMLElement::class);
     }

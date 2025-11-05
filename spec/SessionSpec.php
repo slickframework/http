@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -21,29 +23,29 @@ use PhpSpec\ObjectBehavior;
  */
 class SessionSpec extends ObjectBehavior
 {
-    function let()
+    public function let()
     {
         $this->beConstructedWith(Session::DRIVER_NULL, []);
     }
 
-    function it_is_initializable_with_a_driver_class_and_array_of_options()
+    public function it_is_initializable_with_a_driver_class_and_array_of_options()
     {
         $this->shouldHaveType(Session::class);
     }
 
-    function it_initializes_a_session_driver()
+    public function it_initializes_a_session_driver()
     {
         $this->initialize()->shouldBeAnInstanceOf(Session::DRIVER_NULL);
     }
 
-    function it_checks_that_the_driver_class_exists()
+    public function it_checks_that_the_driver_class_exists()
     {
         $this->beConstructedWith('Some\Unknown\ClassName');
         $this->shouldThrow(ClassNotFoundException::class)
             ->during('initialize');
     }
 
-    function it_only_accepts_classes_that_implement_session_driver_interface()
+    public function it_only_accepts_classes_that_implement_session_driver_interface()
     {
         $this->beConstructedWith('stdClass');
         $this->shouldThrow(InvalidDriverClassException::class)

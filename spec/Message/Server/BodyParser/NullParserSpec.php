@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -21,24 +23,23 @@ use Slick\Http\Message\Stream\TextStream;
  */
 class NullParserSpec extends ObjectBehavior
 {
-
-    function let()
+    public function let()
     {
         $stream = new TextStream('Hello world');
         $this->beConstructedWith($stream);
     }
 
-    function its_a_body_parser()
+    public function its_a_body_parser()
     {
         $this->shouldBeAnInstanceOf(BodyParserInterface::class);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(NullParser::class);
     }
 
-    function it_returns_the_body_as_text()
+    public function it_returns_the_body_as_text()
     {
         $this->parse()->shouldBe('Hello world');
     }

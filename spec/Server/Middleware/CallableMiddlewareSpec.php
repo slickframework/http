@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -26,28 +28,27 @@ class CallableMiddlewareSpec extends ObjectBehavior
 {
     private $callable;
 
-    function let()
+    public function let()
     {
         $this->callable = function () {return new Response(200);};
         $this->beConstructedWith($this->callable);
     }
 
-    function its_a_middleware()
+    public function its_a_middleware()
     {
         $this->shouldBeAnInstanceOf(MiddlewareInterface::class);
     }
 
-    function it_is_initializable_with_a_callable()
+    public function it_is_initializable_with_a_callable()
     {
         $this->shouldHaveType(CallableMiddleware::class);
     }
 
-    function it_throws_an_exception_if_it_cannot_create_a_response_from_return(
+    public function it_throws_an_exception_if_it_cannot_create_a_response_from_return(
         ServerRequestInterface $request,
         RequestHandlerInterface $requestHandler
-    )
-    {
-        $this->beConstructedWith(function (){return (object)[];});
+    ) {
+        $this->beConstructedWith(function () {return (object)[];});
         $this->shouldThrow(UnexpectedValueException::class)
             ->during('process', [$request, $requestHandler]);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of Http
  *
@@ -16,7 +18,6 @@ namespace Slick\Http\Message\Server;
  */
 interface BodyParserInterface
 {
-
     /**
      * Parses the provided
      *

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Slick\Http\Message\Server;
 
 use spec\Slick\Http\Message\Server\UploadedFileSpec;

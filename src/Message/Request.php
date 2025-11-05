@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -10,8 +12,10 @@
 namespace Slick\Http\Message;
 
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Slick\Http\Message\Exception\InvalidArgumentException;
+use Slick\Http\Message\Stream\TextStream;
 
 /**
  * Request
@@ -41,15 +45,17 @@ class Request extends Message implements RequestInterface
      * @param string $method
      * @param string|UriInterface|null $target
      * @param string $body
-     * @param array $headers
+     * @param array<string, string> $headers
      */
     public function __construct(
         string $method,
         UriInterface|string|null $target = null,
-        string $body = '',
+        StreamInterface|string $body = '',
         array $headers = []
     ) {
-        parent::__construct($body);
+        $body = \is_string($body) ? new TextStream($body) : $body;
+        $body->rewind();
+        parent::__construct($body->getContents());
         $this->method = $method;
 
         $this->target = $target instanceof UriInterface
@@ -118,7 +124,7 @@ class Request extends Message implements RequestInterface
             'DELETE', 'CONNECT', 'TRACE', 'PATCH', 'PURGE'
         ];
 
-        if (! in_array($method, $knownMethods)) {
+        if (! \in_array($method, $knownMethods)) {
             throw new InvalidArgumentException(
                 "Invalid or unknown method name."
             );
@@ -148,6 +154,7 @@ class Request extends Message implements RequestInterface
      * @param UriInterface $uri New request URI to use.
      * @param bool $preserveHost Preserve the original state of the Host header.
      * @return static
+     * @SuppressWarnings(PHPMD)
      */
     public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
     {
@@ -161,6 +168,7 @@ class Request extends Message implements RequestInterface
      *
      * @param UriInterface $uri
      * @param bool $preserveHost
+     * @SuppressWarnings(PHPMD)
      */
     protected function setUri(UriInterface $uri, bool $preserveHost = false): string
     {

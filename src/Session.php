@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -22,27 +24,26 @@ use Slick\Http\Session\SessionDriverInterface;
 */
 final class Session
 {
-
-    const DRIVER_NULL   = NullDriver::class;
-    const DRIVER_SERVER = ServerDriver::class;
+    public const DRIVER_NULL   = NullDriver::class;
+    public const DRIVER_SERVER = ServerDriver::class;
 
     /**
      * @var string
      */
-    private $driverClass;
+    private string $driverClass;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
-    private $options;
+    private array $options;
 
     /**
      * Creates a Session factory
      *
      * @param string $driverClass
-     * @param array  $options
+     * @param array<string, mixed>  $options
      */
-    public function __construct($driverClass, array $options = [])
+    public function __construct(string $driverClass, array $options = [])
     {
         $this->driverClass = $driverClass;
         $this->options = $options;
@@ -52,15 +53,17 @@ final class Session
      * Creates the session driver with provided options
      *
      * @param string $driverClass
-     * @param array  $options
+     * @param array<string, mixed>  $options
      *
      * @return SessionDriverInterface
      *
      * @throws ClassNotFoundException if class does not exists
-     * @throws InvalidDriverClassException if class does not implement the SessionDriverInterface
+     * @throws InvalidDriverClassException if the class does not implement the SessionDriverInterface
      */
-    public static function create($driverClass = self::DRIVER_SERVER, array $options = [])
-    {
+    public static function create(
+        string $driverClass = self::DRIVER_SERVER,
+        array $options = []
+    ): SessionDriverInterface {
         $session = new Session($driverClass, $options);
         return $session->initialize();
     }
@@ -73,24 +76,26 @@ final class Session
      * @throws ClassNotFoundException if class does not exists
      * @throws InvalidDriverClassException if class does not implement the SessionDriverInterface
      */
-    public function initialize()
+    public function initialize(): SessionDriverInterface
     {
         $this->checkClassExistence();
 
         $this->checkClassType();
 
         $className = $this->driverClass;
-        return new $className($this->options);
+        /** @var SessionDriverInterface $sessionDriver */
+        $sessionDriver = new $className($this->options);
+        return $sessionDriver;
     }
 
     /**
-     * Checks if current driver class implements SessionDriverInterface
+     * Checks if the current driver class implements SessionDriverInterface
      */
-    private function checkClassType()
+    private function checkClassType(): void
     {
         if (! is_subclass_of($this->driverClass, SessionDriverInterface::class)) {
             throw new InvalidDriverClassException(
-                sprintf(
+                \sprintf(
                     "Session driver classes must implement %s interface.",
                     SessionDriverInterface::class
                 )
@@ -101,11 +106,11 @@ final class Session
     /**
      * Check if driver class exists
      */
-    private function checkClassExistence()
+    private function checkClassExistence(): void
     {
         if (!class_exists($this->driverClass)) {
             throw new ClassNotFoundException(
-                "Session driver class '{$this->driverClass}'' does not exists."
+                "Session driver class '$this->driverClass'' does not exists."
             );
         }
     }

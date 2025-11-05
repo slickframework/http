@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -15,7 +17,6 @@ use Psr\Http\Client\NetworkExceptionInterface;
 use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use React\Promise\Promise;
 use Slick\Http\Client\CurlHttpClient;
 use PhpSpec\ObjectBehavior;
 use Slick\Http\Client\CurlState;
@@ -32,8 +33,7 @@ include(__DIR__.'/mocked-functions.php');
  */
 class CurlHttpClientSpec extends ObjectBehavior
 {
-
-    function let(RequestInterface $request)
+    public function let(RequestInterface $request)
     {
         $request->getMethod()->willReturn('PUT');
         $request->getHeaders()->willReturn([
@@ -50,24 +50,24 @@ class CurlHttpClientSpec extends ObjectBehavior
         );
     }
 
-    function its_a_client_interface()
+    public function its_a_client_interface()
     {
         $this->shouldBeAnInstanceOf(ClientInterface::class);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(CurlHttpClient::class);
     }
 
-    function it_will_return_a_response(RequestInterface $request)
+    public function it_will_return_a_response(RequestInterface $request)
     {
         $response = $this->sendRequest($request);
         $response->shouldBeAnInstanceOf(ResponseInterface::class);
         $response->getStatusCode()->shouldBe(200);
     }
 
-    function it_uses_curl(RequestInterface $request)
+    public function it_uses_curl(RequestInterface $request)
     {
         $this->sendRequest($request);
         if (CurlState::$resource === false) {
@@ -75,7 +75,7 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    function it_handles_authentication(RequestInterface $request)
+    public function it_handles_authentication(RequestInterface $request)
     {
         $this->sendRequest($request);
         if (! isset(CurlState::$options[CURLOPT_USERPWD]) ||
@@ -85,7 +85,7 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    function it_constructs_the_url_for_curl_to_use(RequestInterface $request)
+    public function it_constructs_the_url_for_curl_to_use(RequestInterface $request)
     {
         $this->sendRequest($request);
         if (! isset(CurlState::$options[CURLOPT_URL]) ||
@@ -95,7 +95,7 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    function it_can_infer_url_from_request(RequestInterface $request)
+    public function it_can_infer_url_from_request(RequestInterface $request)
     {
         $uri = new Uri('http://example.org/some/path?foo=bar');
         $request->getUri()->willReturn($uri);
@@ -108,7 +108,7 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    function it_sets_the_method_from_request(RequestInterface $request)
+    public function it_sets_the_method_from_request(RequestInterface $request)
     {
         $this->sendRequest($request);
         if (! isset(CurlState::$options[CURLOPT_CUSTOMREQUEST]) ||
@@ -118,7 +118,7 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    function it_sets_the_headers_from_request(RequestInterface $request)
+    public function it_sets_the_headers_from_request(RequestInterface $request)
     {
         $expected = ['Content-Type: application/json; charset=utf-8'];
         $this->sendRequest($request);
@@ -129,7 +129,7 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    function it_sets_the_body_from_request(RequestInterface $request)
+    public function it_sets_the_body_from_request(RequestInterface $request)
     {
         $this->sendRequest($request);
         if (! isset(CurlState::$options[CURLOPT_POSTFIELDS]) ||
@@ -139,7 +139,7 @@ class CurlHttpClientSpec extends ObjectBehavior
         }
     }
 
-    function it_throws_a_network_exception_on_curl_error(RequestInterface $request)
+    public function it_throws_a_network_exception_on_curl_error(RequestInterface $request)
     {
         CurlState::$error = CURLE_COULDNT_CONNECT;
         $this->shouldThrow(NetworkExceptionInterface::class)
@@ -147,7 +147,7 @@ class CurlHttpClientSpec extends ObjectBehavior
         CurlState::$error = 0;
     }
 
-    function it_throws_a_request_exception(RequestInterface $request)
+    public function it_throws_a_request_exception(RequestInterface $request)
     {
         CurlState::$error = CURLE_FAILED_INIT;
         $this->shouldThrow(RequestExceptionInterface::class)

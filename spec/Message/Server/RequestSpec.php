@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -22,35 +24,34 @@ use Slick\Http\Message\Stream\TextStream;
  */
 class RequestSpec extends ObjectBehavior
 {
-
     public function __construct()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/';
     }
 
-    function its_an_http_request_message_with_client_incoming_data()
+    public function its_an_http_request_message_with_client_incoming_data()
     {
         $this->shouldBeAnInstanceOf(\Slick\Http\Message\Request::class);
         $this->getMethod()->shouldBe('GET');
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(Request::class);
     }
 
-    function it_holds_an_environment_server_values()
+    public function it_holds_an_environment_server_values()
     {
         $this->getServerParams()->shouldBe($_SERVER);
     }
 
-    function it_can_hold_a_list_of_cookies()
+    public function it_can_hold_a_list_of_cookies()
     {
         $this->getCookieParams()->shouldBe($_COOKIE);
     }
 
-    function it_can_create_an_instance_with_other_cookies()
+    public function it_can_create_an_instance_with_other_cookies()
     {
         $request = $this->withCookieParams(['foo' => 'bar']);
         $request->shouldNotBe($this->getWrappedObject());
@@ -58,7 +59,7 @@ class RequestSpec extends ObjectBehavior
         $request->getCookieParams()->shouldBe(['foo' => 'bar']);
     }
 
-    function it_cah_have_a_list_of_query_params()
+    public function it_cah_have_a_list_of_query_params()
     {
         $_GET['foo'] = 'bar';
         $request = $this->withRequestTarget('/test?bar=baz&test=target');
@@ -69,7 +70,7 @@ class RequestSpec extends ObjectBehavior
         ]);
     }
 
-    function it_can_create_an_instance_with_other_query_params()
+    public function it_can_create_an_instance_with_other_query_params()
     {
         $request = $this->withQueryParams(['bar' => 'foo']);
         $request->shouldNotBe($this->getWrappedObject());
@@ -77,14 +78,14 @@ class RequestSpec extends ObjectBehavior
         $request->getQueryParams()->shouldBe(['bar' => 'foo']);
     }
 
-    function it_holds_a_list_of_uploaded_files()
+    public function it_holds_a_list_of_uploaded_files()
     {
         $_FILES = include 'files.php';
         $files = $this->getUploadedFiles();
         $files['file1']->shouldBeAnInstanceOf(UploadedFile::class);
     }
 
-    function it_can_create_an_instance_with_other_uploaded_files()
+    public function it_can_create_an_instance_with_other_uploaded_files()
     {
         $request = $this->withUploadedFiles([]);
         $request->shouldNotBe($this->getWrappedObject());
@@ -92,13 +93,13 @@ class RequestSpec extends ObjectBehavior
         $request->getUploadedFiles()->shouldBe([]);
     }
 
-    function it_throws_an_exception_with_invalid_uploaded_files_tree()
+    public function it_throws_an_exception_with_invalid_uploaded_files_tree()
     {
         $this->shouldThrow(InvalidArgumentException::class)
             ->during('withUploadedFiles', [['foo' => 'bar']]);
     }
 
-    function it_parses_data_from_body()
+    public function it_parses_data_from_body()
     {
         $body = new TextStream('foo=bar&bar=bas');
         $request = $this
@@ -107,7 +108,7 @@ class RequestSpec extends ObjectBehavior
         $request->getParsedBody()->shouldHaveKeyWithValue('bar', 'bas');
     }
 
-    function it_can_create_an_instance_with_other_parsed_body_data()
+    public function it_can_create_an_instance_with_other_parsed_body_data()
     {
         $request = $this->withParsedBody(['foo' => 'bar']);
         $request->shouldNotBe($this->getWrappedObject());
@@ -115,18 +116,18 @@ class RequestSpec extends ObjectBehavior
         $request->getParsedBody()->shouldBe(['foo' => 'bar']);
     }
 
-    function it_throws_an_exception_for_unsupported_data_types_on_parsed_body()
+    public function it_throws_an_exception_for_unsupported_data_types_on_parsed_body()
     {
         $this->shouldThrow(InvalidArgumentException::class)
             ->during('withParsedBody', ['Hello there!']);
     }
 
-    function it_holds_a_list_of_named_attributes()
+    public function it_holds_a_list_of_named_attributes()
     {
         $this->getAttributes()->shouldBeArray();
     }
 
-    function it_can_create_a_new_instance_with_a_specific_attribute()
+    public function it_can_create_a_new_instance_with_a_specific_attribute()
     {
         $request = $this->withAttribute('foo', 'bar');
         $request->shouldNotBe($this->getWrappedObject());
@@ -134,7 +135,7 @@ class RequestSpec extends ObjectBehavior
         $request->getAttribute('foo')->shouldBe('bar');
     }
 
-    function it_can_create_an_instance_without_an_attribute()
+    public function it_can_create_an_instance_without_an_attribute()
     {
         $request = $this->withAttribute('test', 'fail')
             ->withAttribute('foo', 'bar')

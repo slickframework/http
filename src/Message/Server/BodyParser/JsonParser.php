@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -42,8 +44,6 @@ class JsonParser implements BodyParserInterface
     {
         $this->stream->rewind();
         $string = $this->stream->getContents();
-        $json_decode = json_decode($string, false);
-
-        return (object) $json_decode;
+        return (object) json_decode($string, false);
     }
 }

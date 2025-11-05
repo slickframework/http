@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -21,24 +23,23 @@ use Slick\Http\Message\Stream\TextStream;
  */
 class JsonParserSpec extends ObjectBehavior
 {
-
-    function let()
+    public function let()
     {
         $stream = new TextStream(json_encode(['foo' => 'bar']));
         $this->beConstructedWith($stream);
     }
 
-    function its_a_body_parser()
+    public function its_a_body_parser()
     {
         $this->shouldBeAnInstanceOf(BodyParserInterface::class);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType(JsonParser::class);
     }
 
-    function it_parses_the_a_json_serialized_body()
+    public function it_parses_the_a_json_serialized_body()
     {
         $this->parse()->shouldBeAnInstanceOf(\stdClass::class);
     }

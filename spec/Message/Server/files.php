@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $content = 'Hello world, form a test!';
 $file = tempnam("/tmp", "FOO");
 file_put_contents($file, $content);
@@ -8,7 +10,7 @@ return [
     'file1' => [
         'name' => 'test.txt',
         'type' => 'plain/text',
-        'size' => strlen($content),
+        'size' => \strlen($content),
         'tmp_name' => $file,
         'error' => UPLOAD_ERR_OK
     ],
@@ -29,9 +31,9 @@ return [
             $file,
         ],
         'size' => [
-            strlen($content),
-            strlen($content),
-            strlen($content),
+            \strlen($content),
+            \strlen($content),
+            \strlen($content),
         ],
         'error' => [
             UPLOAD_ERR_OK,
@@ -53,8 +55,8 @@ return [
             'bar' => $file,
         ],
         'size' => [
-            'foo' => strlen($content),
-            'bar' => strlen($content),
+            'foo' => \strlen($content),
+            'bar' => \strlen($content),
         ],
         'error' => [
             'foo' => UPLOAD_ERR_OK,

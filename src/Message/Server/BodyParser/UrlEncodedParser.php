@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -35,11 +37,12 @@ class UrlEncodedParser implements BodyParserInterface
     }
 
     /**
-     * Parses the URL encoded body.
+     * Parses the URL-encoded body.
      *
-     * @return array
+     * @return array<string, mixed>
+     * @SuppressWarnings(PHPMD)
      */
-    public function parse()
+    public function parse(): array
     {
         $this->stream->rewind();
         parse_str($this->stream->getContents(), $parsed);

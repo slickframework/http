@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -12,7 +14,6 @@ namespace Slick\Http\Server;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slick\Http\Server\Exception\InvalidArgumentException;
 use Slick\Http\Server\Exception\UnexpectedValueException;
 use Slick\Http\Server\Middleware\CallableMiddleware;
 
@@ -24,14 +25,14 @@ use Slick\Http\Server\Middleware\CallableMiddleware;
 class MiddlewareStack
 {
     /**
-     * @var array|MiddlewareInterface[]
+     * @var list<MiddlewareInterface|callable>|MiddlewareInterface[]
      */
-    private $middlewareStack = [];
+    private array $middlewareStack = [];
 
     /**
      * Creates a Middleware Stack
      *
-     * @param MiddlewareInterface[]|callable[] $middlewareStack
+     * @param list<MiddlewareInterface|callable>|MiddlewareInterface[]|callable[] $middlewareStack
      */
     public function __construct(array $middlewareStack)
     {
@@ -47,16 +48,8 @@ class MiddlewareStack
      *
      * @return MiddlewareStack
      */
-    public function push($middleware)
+    public function push(MiddlewareInterface|callable $middleware)
     {
-        if (! $middleware instanceof MiddlewareInterface &&
-            ! is_callable($middleware)
-        ) {
-            throw new InvalidArgumentException(
-                "Middleware stack accepts only MiddlewareInterface object or callable"
-            );
-        }
-
         array_push($this->middlewareStack, $middleware);
         return $this;
     }
@@ -66,7 +59,7 @@ class MiddlewareStack
      *
      * @param ServerRequestInterface $request
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request)
     {
@@ -96,13 +89,12 @@ class MiddlewareStack
                 $middleware = new CallableMiddleware($middleware);
             }
 
-            $response = $middleware->process($request, $this->resolve($index + 1));
+            $nextHandler = $this->resolve($index + 1);
+            $response = match (true) {
+                $middleware instanceof MiddlewareInterface => $middleware->process($request, $nextHandler),
+                default => $middleware($request, $nextHandler),
+            };
 
-            if (!($response instanceof ResponseInterface)) {
-                throw new UnexpectedValueException(
-                    sprintf('The middleware must return an instance of %s', ResponseInterface::class)
-                );
-            }
 
             return $response;
         });

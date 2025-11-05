@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of slick/http
  *
@@ -21,14 +23,13 @@ use Slick\Http\Message\Stream\TextStream;
 */
 class Message implements MessageInterface
 {
-
     /**
      * @var string
      */
     private string $protocolVersion = '1.1';
 
     /**
-     * @var array
+     * @var array<string, string[]>
      */
     protected array $headers = [];
 
@@ -40,9 +41,9 @@ class Message implements MessageInterface
     /**
      * Creates an HTTP Message
      *
-     * @param string $body
+     * @param string|StreamInterface $body
      */
-    public function __construct(string $body = '')
+    public function __construct(string|StreamInterface $body = '')
     {
         $body = $body instanceof StreamInterface
             ? $body
@@ -103,7 +104,7 @@ class Message implements MessageInterface
      * While header names are not case-sensitive, getHeaders() will preserve the
      * exact case in which headers were originally specified.
      *
-     * @return string[][] Returns an associative array of the message's headers. Each
+     * @return array<string, string[]> Returns an associative array of the message's headers. Each
      *     key MUST be a header name, and each value MUST be an array of strings
      *     for that header.
      */
@@ -123,7 +124,7 @@ class Message implements MessageInterface
     public function hasHeader(string $name): bool
     {
         $key = $this->headerKey($name);
-        return array_key_exists($key, $this->headers);
+        return \array_key_exists($key, $this->headers);
     }
 
     /**
@@ -143,7 +144,7 @@ class Message implements MessageInterface
     public function getHeader(string $name): array
     {
         $key = $this->headerKey($name);
-        if (array_key_exists($key, $this->headers)) {
+        if (\array_key_exists($key, $this->headers)) {
             return $this->headers[$key];
         }
 
@@ -197,7 +198,7 @@ class Message implements MessageInterface
         $key = $this->headerKey($name);
 
         $message = clone $this;
-        $message->headers[$key] = is_array($value) ? $value : [$value];
+        $message->headers[$key] = \is_array($value) ? $value : [$value];
         return $message;
     }
 
@@ -220,7 +221,7 @@ class Message implements MessageInterface
     public function withAddedHeader(string $name, $value): MessageInterface
     {
         $header = $this->getHeader($name);
-        $values = is_array($value) ? $value : [$value];
+        $values = \is_array($value) ? $value : [$value];
         foreach ($values as $newValue) {
             $header[] = $newValue;
         }
@@ -244,7 +245,7 @@ class Message implements MessageInterface
         $message = clone $this;
         $key = $this->headerKey($name);
 
-        if (array_key_exists($key, $message->headers)) {
+        if (\array_key_exists($key, $message->headers)) {
             unset($message->headers[$key]);
         }
 
