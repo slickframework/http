@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [Unreleased]
 
+## [v4.0.2] - 2025-12-22
+### Added
+- `UrlEncodedParser` is used to parse multipart/form-data
+
 ## [v4.0.0] - 2025-11-03
 ### Added
 - PHP 8 support
@@ -86,7 +90,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/slickframework/http/compare/v4.0.0...HEAD
+[Unreleased]: https://github.com/slickframework/http/compare/v4.0.2...HEAD
+[v4.0.2]: https://github.com/slickframework/http/compare/v4.0.0...v4.0.2
 [v4.0.0]: https://github.com/slickframework/http/compare/v3.0.3...v4.0.0
 [v3.0.3]: https://github.com/slickframework/http/compare/v3.0.2...v3.0.3
 [v3.0.2]: https://github.com/slickframework/http/compare/v3.0.0...v3.0.2
