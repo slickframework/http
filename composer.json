@@ -12,7 +12,7 @@
     "psr-15",
     "psr-18"
   ],
-  "version": "v4.0.0",
+  "version": "v4.0.2",
   "minimum-stability": "dev",
   "authors": [
     {
