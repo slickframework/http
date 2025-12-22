@@ -36,7 +36,7 @@ class BodyParser
     private static array $parsers = [
         JsonParser::class => ['+json', 'application/json'],
         XmlParser::class  => ['+xml', 'text/xml'],
-        UrlEncodedParser::class => ['urlencoded']
+        UrlEncodedParser::class => ['urlencoded', 'application/x-www-form-urlencoded', 'multipart/form-data']
     ];
 
     /**
